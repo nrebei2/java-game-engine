@@ -21,14 +21,18 @@ public class Application {
     // The window handle
     private long window;
 
+    // The current listener
     private Game listener;
 
-    public Application(Game listener) {
+    public float width;
+    public float height;
+
+    public Application(Game listener, Config config) {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
         this.listener = listener;
 
-        init();
+        init(config);
         loop();
 
         // Application will close
@@ -43,7 +47,7 @@ public class Application {
         glfwSetErrorCallback(null).free();
     }
 
-    private void init() {
+    private void init(Config config) {
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set();
@@ -58,7 +62,7 @@ public class Application {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
         // Create the window
-        window = glfwCreateWindow(800, 600, "Hello World!", NULL, NULL);
+        window = glfwCreateWindow(config.width, config.height, "Hello World!", NULL, NULL);
         if (window == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
 

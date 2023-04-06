@@ -146,9 +146,9 @@ public class Engine {
     /**
      * Run all systems attached to this engine
      */
-    public void run() {
+    public void run(float delta) {
         for (System s : systems) {
-            s.run(this);
+            s.run(this, delta);
         }
     }
 

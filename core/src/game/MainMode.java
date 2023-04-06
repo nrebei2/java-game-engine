@@ -35,11 +35,24 @@ public class MainMode implements Screen {
         triangle.setGeometry(tri);
 
         // Entity creation
-        engine.createEntity(triangle, new Transform(new Vector3(3, 0, 0), new Vector3(), new Vector3(1, 1, 1)));
-        engine.createEntity(new Camera(new Vector3(), new Vector3(), 0.01f, 100, (float) Math.PI, 8 / 6));
+        engine.createEntity(
+                triangle,
+                new Transform(
+                        new Vector3(3, 3, -3),
+                        new Vector3((float)Math.PI/2, (float)Math.PI/4, (float)Math.PI/5),
+                        new Vector3(1, 1, 1)
+                )
+        );
+
+        engine.createEntity(
+                new Camera(
+                        new Vector3(),
+                        new Vector3(),
+                        0.01f, 100, (float) Math.PI, 8 / 6)
+        );
 
         // Basic rendering system with camera
-        engine.addSystem((engine) -> {
+        engine.addSystem((engine, delta) -> {
             var camera = engine.findEntitiesWith(Camera.class).iterator().next().components;
             engine.findEntitiesWith(Mesh.class, Transform.class).forEach((result -> {
                 var pair = result.components;
@@ -59,7 +72,7 @@ public class MainMode implements Screen {
 
     @Override
     public void render(float delta) {
-        engine.run();
+        engine.run(delta);
     }
 
     @Override
