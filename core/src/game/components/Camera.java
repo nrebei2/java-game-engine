@@ -9,9 +9,7 @@ import util.Vector3;
 public class Camera {
     private Matrix4 proj;
 
-    /**
-     * Transform of this camera
-     */
+    /** Transform of this camera */
     private Transform transform;
 
     /**

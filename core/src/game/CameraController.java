@@ -39,14 +39,14 @@ public class CameraController implements System {
         if (GameEngine.input.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) delta *= shiftScale;
 
         Vector3 angles = camera.getTransform().getRotation();
-        float sY = (float) Math.sin(angles.y);
-        float cY = (float) Math.cos(angles.y);
-        float sZ = (float) Math.sin(angles.z);
-        float cZ = (float) Math.cos(angles.z);
+        float sY = (float)Math.sin(angles.y);
+        float cY = (float)Math.cos(angles.y);
+        float sZ = (float)Math.sin(angles.z);
+        float cZ = (float)Math.cos(angles.z);
 
         // Forward vector
-        float f_x = cY * cZ;
-        float f_y = cY * sZ;
+        float f_x = cY*cZ;
+        float f_y = cY*sZ;
         float f_z = sY;
 
         // Right vector
@@ -70,7 +70,7 @@ public class CameraController implements System {
         camera.getTransform().setPosition(position);
 
         // Rotation
-        float limit = (float) (Math.PI / 2.0);
+        float limit = (float)(Math.PI / 2.0);
         angles.y = clamp(angles.y - mouseSensivity * GameEngine.input.getDeltaY(), -limit, limit);
         angles.z -= mouseSensivity * GameEngine.input.getDeltaX();
         camera.getTransform().setRotation(angles);

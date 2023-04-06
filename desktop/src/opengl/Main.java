@@ -1,7 +1,7 @@
 package opengl;
 
-import util.Application;
 import game.Root;
+import util.Application;
 import util.Config;
 
 public class Main {
