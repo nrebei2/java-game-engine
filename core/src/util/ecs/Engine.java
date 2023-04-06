@@ -2,44 +2,55 @@ package util.ecs;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
  * Independent container for all ECS data
  */
 public class Engine {
-    /** Entities attached to this engine */
+    /**
+     * Entities attached to this engine
+     */
     UnorderedList<Entity> entities;
 
+    /**
+     * Caches for allocation reduction
+     */
     Result<?> resultCache;
+    With2<?, ?> w2Cache;
+    With3<?, ?, ?> w3Cache;
 
-    /** Systems attached to this engine */
+    /**
+     * Systems attached to this engine
+     */
     List<System> systems;
 
     public Engine() {
         entities = new UnorderedList<>();
         systems = new ArrayList<>();
         resultCache = new Result<>();
+        w2Cache = new With2<>();
     }
 
     /**
      * Create entity with initial components
+     *
      * @param components to add to the entity
      * @return Created entity
      */
     public Entity createEntity(Object... components) {
         Entity entity = new Entity();
-        for (Object c: components) {
+        for (Object c : components) {
             entity.add(c);
         }
         entities.add(entity);
+        entity.setEnabled(true);
         return entity;
     }
 
     /**
      * Requires == for entity (not just Objects.equals)
+     *
      * @param entity to remove from system
      * @return whether entity was removed or not
      */
@@ -75,14 +86,12 @@ public class Engine {
 
     /**
      * Finds all entities with components of the specified type.
+     *
      * @return a stream of components (of no particular order)
      */
     public <T> Stream<Result<T>> findEntitiesWith(Class<T> component) {
-        resultCache.components = null;
-        AtomicInteger index = new AtomicInteger();
         return entities.stream().filter(e -> e.containsType(component) && e.isEnabled()).
                 map((e) -> {
-                    int idx = index.getAndIncrement();
                     var res = (Result<T>) resultCache;
                     res.entity = e;
                     res.components = e.getComponent(component);
@@ -92,13 +101,15 @@ public class Engine {
 
     /**
      * Finds all entities with components of the specified types.
+     *
      * @return a stream of components (of no particular order)
      */
     public <T1, T2> Stream<Result<With2<T1, T2>>> findEntitiesWith(Class<T1> comp1, Class<T2> comp2) {
-        resultCache.components = null;
+        var comps = (With2<T1, T2>) w2Cache;
+        var res = (Result<With2<T1, T2>>) resultCache;
+        res.components = comps;
         return entities.stream().filter(e -> e.containsType(comp1) && e.containsType(comp2)).
                 map((e) -> {
-                    var res = (Result<With2<T1,T2>>) resultCache;
                     res.entity = e;
                     res.components.comp1 = e.getComponent(comp1);
                     res.components.comp2 = e.getComponent(comp2);
@@ -108,13 +119,15 @@ public class Engine {
 
     /**
      * Finds all entities with components of the specified types.
+     *
      * @return a stream of components (of no particular order)
      */
     public <T1, T2, T3> Stream<Result<With3<T1, T2, T3>>> findEntitiesWith(Class<T1> comp1, Class<T2> comp2, Class<T3> comp3) {
-        resultCache.components = null;
+        var comps = (With3<T1, T2, T3>) w3Cache;
+        var res = (Result<With3<T1, T2, T3>>) resultCache;
+        res.components = comps;
         return entities.stream().filter(e -> e.containsType(comp1) && e.containsType(comp2) && e.containsType(comp3)).
                 map((e) -> {
-                    var res = (Result<With3<T1,T2,T3>>) resultCache;
                     res.entity = e;
                     res.components.comp1 = e.getComponent(comp1);
                     res.components.comp2 = e.getComponent(comp2);
@@ -130,9 +143,11 @@ public class Engine {
         systems.add(system);
     }
 
-    /** Run all systems attached to this engine */
+    /**
+     * Run all systems attached to this engine
+     */
     public void run() {
-        for (System s: systems) {
+        for (System s : systems) {
             s.run(this);
         }
     }
@@ -151,6 +166,7 @@ public class Engine {
          */
         public T components;
     }
+
     public class With2<T1, T2> {
         public T1 comp1;
         public T2 comp2;

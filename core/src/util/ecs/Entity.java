@@ -7,10 +7,14 @@ import java.util.Map;
  * Entity part of the ECS. No state other than the components it holds.
  */
 public final class Entity extends Identifiable {
-    /** components[c] = comp iff component comp is attached to this entity with class c */
+    /**
+     * components[c] = comp iff component comp is attached to this entity with class c
+     */
     Map<Class<?>, Object> components;
 
-    /** Whether systems will be able to access components of this entity. */
+    /**
+     * Whether systems will be able to access components of this entity.
+     */
     private boolean enabled;
 
     public Entity() {
@@ -28,6 +32,7 @@ public final class Entity extends Identifiable {
 
     /**
      * Adds a component to this entity. There is no protection for assigning the same component to multiple entities.
+     *
      * @param component to add
      * @return same entity for chaining
      * @throws RuntimeException if you assign a component of an already attached class
@@ -57,6 +62,7 @@ public final class Entity extends Identifiable {
 
     /**
      * Removes a component if there is a component of the specified type.
+     *
      * @return the component that was removed, null oth.
      */
     public Object removeType(Class<?> component) {

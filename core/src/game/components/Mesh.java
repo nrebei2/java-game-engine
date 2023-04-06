@@ -1,15 +1,17 @@
 package game.components;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 import util.Geometry;
 import util.Matrix4;
 import util.ShaderProgram;
 import util.VertexAttribute;
+import util.attributes.ByteAttribute;
+import util.attributes.FloatAttribute;
+import util.attributes.IntAttribute;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
+
+import static org.lwjgl.opengl.GL43.*;
 
 /**
  * A mesh component consists of vertices (held by its geometry) and a shader.
@@ -20,14 +22,14 @@ public class Mesh {
     private Geometry geo;
 
     public Mesh(ShaderProgram program) {
-        VAO = GL30.glGenVertexArrays();
+        VAO = glGenVertexArrays();
         this.program = program;
     }
 
     public void setGeometry(Geometry geo) {
         this.geo = geo;
-        GL30.glBindVertexArray(VAO);
-        for (Map.Entry<String, VertexAttribute> entry: geo.attributeMap.entrySet()) {
+        glBindVertexArray(VAO);
+        for (Map.Entry<String, VertexAttribute> entry : geo.attributeMap.entrySet()) {
             // Check if shader attribute and geometry attribute match names
             String name = entry.getKey();
             VertexAttribute attribute = entry.getValue();
@@ -35,21 +37,34 @@ public class Mesh {
             int location = program.attributes.get(name);
 
             // Generate VBO, set attrib pointer
-            int VBO = GL15.glGenBuffers();
+            int VBO = glGenBuffers();
             //System.out.printf("%s location: %d\n", name, program.attributes.get(name));
-            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, VBO);
-            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, attribute.data, GL15.GL_STATIC_DRAW);
-            GL20.glVertexAttribPointer(location, attribute.size, attribute.type, attribute.normalized, 0, 0);
-            GL20.glEnableVertexAttribArray(location);
+            glBindBuffer(GL_ARRAY_BUFFER, VBO);
+            switch (attribute.type) {
+                case GL_FLOAT -> {
+                    FloatAttribute attr = (FloatAttribute) attribute;
+                    glBufferData(GL_ARRAY_BUFFER, attr.data, attribute.dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+                }
+                case GL_UNSIGNED_INT -> {
+                    IntAttribute attr = (IntAttribute) attribute;
+                    glBufferData(GL_ARRAY_BUFFER, attr.data, attribute.dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+                }
+                case GL_UNSIGNED_BYTE -> {
+                    ByteAttribute attr = (ByteAttribute) attribute;
+                    glBufferData(GL_ARRAY_BUFFER, ByteBuffer.wrap(attr.data), attribute.dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+                }
+            }
+            glVertexAttribPointer(location, attribute.size, attribute.type, attribute.normalized, 0, 0);
+            glEnableVertexAttribArray(location);
         }
 
         if (geo.indices != null) {
-            int EBO = GL15.glGenBuffers();
-            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, EBO);
-            GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, geo.indices, GL15.GL_STATIC_DRAW);
+            int EBO = glGenBuffers();
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, geo.indices, GL_STATIC_DRAW);
         }
 
-        GL30.glBindVertexArray(0);
+        glBindVertexArray(0);
     }
 
     /**
@@ -59,14 +74,13 @@ public class Mesh {
         if (geo == null) return;
 
         program.bind();
-        GL30.glBindVertexArray(VAO);
+        glBindVertexArray(VAO);
         if (geo.indices != null) {
-            GL11.glDrawElements(GL11.GL_TRIANGLES, geo.indices.length, GL11.GL_UNSIGNED_INT, 0);
+            glDrawElements(GL_TRIANGLES, geo.indices.length, GL_UNSIGNED_INT, 0);
+        } else {
+            glDrawArrays(GL_TRIANGLES, 0, geo.count());
         }
-        else {
-            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, geo.count());
-        }
-        GL30.glBindVertexArray(0);
+        glBindVertexArray(0);
     }
 
     /**
@@ -79,5 +93,7 @@ public class Mesh {
     /**
      * Sets the model matrix for this mesh.
      */
-    public void setModelMatrix(Matrix4 model) {  program.setMat4("u_model", model);  }
+    public void setModelMatrix(Matrix4 model) {
+        program.setMat4("u_model", model);
+    }
 }

@@ -1,7 +1,9 @@
 package util.ecs;
 
 public abstract class Identifiable {
-    /** integer identifier assigned to this object */
+    /**
+     * integer identifier assigned to this object
+     */
     int id;
 
     public void setId(int id) {

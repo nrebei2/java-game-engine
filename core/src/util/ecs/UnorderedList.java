@@ -1,14 +1,20 @@
 package util.ecs;
 
-import java.util.*;
+import java.util.AbstractList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.RandomAccess;
 
 /**
  * ArrayList with no guarantees on order. This allows remove to be O(1).
+ *
  * @param <T> Extends identifiable. This structure will modify its elements ids for fast access.
- *           UB if you edit an elements id while in this structure.
+ *            UB if you edit an elements id while in this structure.
  */
 public class UnorderedList<T extends Identifiable> extends AbstractList<T> implements List<T>, RandomAccess {
-    /** capacity = entities.length */
+    /**
+     * capacity = entities.length
+     */
     private Object[] elements;
     private int size;
 
@@ -101,6 +107,7 @@ public class UnorderedList<T extends Identifiable> extends AbstractList<T> imple
 
     /**
      * Doubles the capacity.
+     *
      * @throws OutOfMemoryError
      */
     private void resize() {

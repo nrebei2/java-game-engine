@@ -12,7 +12,6 @@ public class Camera {
     private Vector3 euler_ang;
 
     /**
-     *
      * @param pos
      * @param euler_angles (0,0,0) points along the +x axis
      * @param near

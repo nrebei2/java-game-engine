@@ -1,18 +1,21 @@
 package util;
 
 import game.Game;
-import org.lwjgl.*;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
-import org.lwjgl.system.*;
+import org.lwjgl.Version;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.GLFWWindowIconifyCallback;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.system.MemoryStack;
 
-import java.nio.*;
+import java.nio.IntBuffer;
 
-import static org.lwjgl.glfw.Callbacks.*;
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL43.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Application {
     // The window handle
@@ -46,7 +49,7 @@ public class Application {
         GLFWErrorCallback.createPrint(System.err).set();
 
         // Initialize GLFW. Most GLFW functions will not work before doing this.
-        if ( !glfwInit() )
+        if (!glfwInit())
             throw new IllegalStateException("Unable to initialize GLFW");
 
         // Configure GLFW
@@ -56,12 +59,12 @@ public class Application {
 
         // Create the window
         window = glfwCreateWindow(800, 600, "Hello World!", NULL, NULL);
-        if ( window == NULL )
+        if (window == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
+            if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
                 glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
         });
 
@@ -72,19 +75,19 @@ public class Application {
             }
         });
 
-       glfwSetWindowIconifyCallback(window, new GLFWWindowIconifyCallback() {
-           @Override
-           public void invoke(long window, boolean iconified) {
-               if (iconified) {
-                   listener.pause();
-               } else {
-                   listener.resume();
-               }
-           }
-       });
+        glfwSetWindowIconifyCallback(window, new GLFWWindowIconifyCallback() {
+            @Override
+            public void invoke(long window, boolean iconified) {
+                if (iconified) {
+                    listener.pause();
+                } else {
+                    listener.resume();
+                }
+            }
+        });
 
         // Get the thread stack and push a new frame
-        try ( MemoryStack stack = stackPush() ) {
+        try (MemoryStack stack = stackPush()) {
             IntBuffer pWidth = stack.mallocInt(1); // int*
             IntBuffer pHeight = stack.mallocInt(1); // int*
 
@@ -132,11 +135,11 @@ public class Application {
 
         listener.create();
         double lastFrame = glfwGetTime();
-        while ( !glfwWindowShouldClose(window) ) {
+        while (!glfwWindowShouldClose(window)) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
             double curFrame = glfwGetTime();
-            listener.render((float)(curFrame - lastFrame));
+            listener.render((float) (curFrame - lastFrame));
             lastFrame = curFrame;
 
             glfwSwapBuffers(window); // swap the color buffers

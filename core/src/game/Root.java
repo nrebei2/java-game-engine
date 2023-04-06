@@ -1,8 +1,5 @@
 package game;
 
-import game.Game;
-import game.MainMode;
-
 /**
  * Root game for this application
  */

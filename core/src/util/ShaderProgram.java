@@ -16,7 +16,9 @@ import static org.lwjgl.system.MemoryStack.stackPush;
  * Vertex, fragment, geometry, and compute shader supported.
  */
 public class ShaderProgram {
-    /** OpenGL ID for the managed program */
+    /**
+     * OpenGL ID for the managed program
+     */
     int ID;
     /**
      * Map of uniform names to locations
@@ -34,6 +36,7 @@ public class ShaderProgram {
 
     /**
      * Creates a program.
+     *
      * @param name name of shader, loaded from assets/shaders
      */
     public ShaderProgram(String name) {
@@ -62,7 +65,7 @@ public class ShaderProgram {
         glLinkProgram(ID);
 
         // Check if compilation succeeded
-        try (MemoryStack stack = stackPush()){
+        try (MemoryStack stack = stackPush()) {
             IntBuffer ip = stack.callocInt(1);
             glGetProgramiv(ID, GL_LINK_STATUS, ip);
             int success = ip.get(0);
@@ -75,7 +78,7 @@ public class ShaderProgram {
             }
         }
 
-        for (Integer sID: sIDS) {
+        for (Integer sID : sIDS) {
             glDetachShader(ID, sID);
             glDeleteShader(sID);
         }
@@ -84,29 +87,29 @@ public class ShaderProgram {
         buildAttributes();
     }
 
-    public void setBool(String name, boolean value)
-    {
+    public void setBool(String name, boolean value) {
         if (glIsProgram(ID)) glUniform1i(uniforms.get(name), value ? 1 : 0);
         else glProgramUniform1f(ID, uniforms.get(name), value ? 1 : 0);
     }
-    public void setInt(String name, int value)
-    {
+
+    public void setInt(String name, int value) {
         if (glIsProgram(ID)) glUniform1i(uniforms.get(name), value);
         else glProgramUniform1i(ID, uniforms.get(name), value);
     }
-    public void setFloat(String name, float value)
-    {
+
+    public void setFloat(String name, float value) {
         if (glIsProgram(ID)) glUniform1f(uniforms.get(name), value);
         else glProgramUniform1f(ID, uniforms.get(name), value);
     }
 
-    public void setMat4(String name, Matrix4 mat)
-    {
+    public void setMat4(String name, Matrix4 mat) {
         if (glIsProgram(ID)) glUniformMatrix4fv(uniforms.get(name), false, mat.val);
         else glUniformMatrix4fv(uniforms.get(name), false, mat.val);
     }
 
-    /** Use the program */
+    /**
+     * Use the program
+     */
     public void bind() {
         if (glGetInteger(GL_CURRENT_PROGRAM) == ID) return;
         glUseProgram(ID);
@@ -114,6 +117,7 @@ public class ShaderProgram {
 
     /**
      * Load and compile shader
+     *
      * @param type type of shader
      * @param path
      * @return empty if any failure occurred, oth. the id of the shader object
@@ -132,7 +136,7 @@ public class ShaderProgram {
         glCompileShader(shad);
 
         // Check if compilation succeeded
-        try (MemoryStack stack = stackPush()){
+        try (MemoryStack stack = stackPush()) {
             IntBuffer ip = stack.callocInt(1);
             glGetShaderiv(shad, GL_COMPILE_STATUS, ip);
             int success = ip.get(0);
@@ -147,7 +151,9 @@ public class ShaderProgram {
         return Optional.of(shad);
     }
 
-    /** Get all active uniforms and store them in uniforms map */
+    /**
+     * Get all active uniforms and store them in uniforms map
+     */
     private void buildUniforms() {
         try (MemoryStack stack = stackPush()) {
             IntBuffer ip = stack.callocInt(1);
@@ -166,7 +172,9 @@ public class ShaderProgram {
         }
     }
 
-    /** Get all active attributes and store them in attribute map */
+    /**
+     * Get all active attributes and store them in attribute map
+     */
     private void buildAttributes() {
         try (MemoryStack stack = stackPush()) {
             IntBuffer ip = stack.callocInt(1);
