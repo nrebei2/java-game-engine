@@ -1,6 +1,7 @@
 package util;
 
 import game.Game;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
@@ -24,8 +25,7 @@ public class Application {
     // The current listener
     private Game listener;
 
-    public float width;
-    public float height;
+    IntBuffer dimensions = BufferUtils.createIntBuffer(2);
 
     public Application(Game listener, Config config) {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
@@ -59,10 +59,12 @@ public class Application {
         // Configure GLFW
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
+        glfwWindowHint(GLFW_RESIZABLE, config.resizable ? GLFW_TRUE : GLFW_FALSE); // the window will be resizable
 
         // Create the window
-        window = glfwCreateWindow(config.width, config.height, "Hello World!", NULL, NULL);
+        window = glfwCreateWindow(
+                config.width, config.height, config.title, config.fullScreen ? glfwGetPrimaryMonitor() : NULL, NULL
+        );
         if (window == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
 
@@ -74,8 +76,10 @@ public class Application {
 
         glfwSetFramebufferSizeCallback(window, new GLFWFramebufferSizeCallback() {
             @Override
-            public void invoke(long window, int width, int height) {
-                listener.resize(width, height);
+            public void invoke(long window, int nWidth, int nHeight) {
+                dimensions.put(0, nWidth);
+                dimensions.put(1, nHeight);
+                listener.resize(nWidth, nHeight);
             }
         });
 
@@ -98,14 +102,17 @@ public class Application {
             // Get the window size passed to glfwCreateWindow
             glfwGetWindowSize(window, pWidth, pHeight);
 
+            dimensions.put(0, pWidth.get(0));
+            dimensions.put(0, pHeight.get(0));
+
             // Get the resolution of the primary monitor
             GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
             // Center the window
             glfwSetWindowPos(
                     window,
-                    (vidmode.width() - pWidth.get(0)) / 2,
-                    (vidmode.height() - pHeight.get(0)) / 2
+                    (vidmode.width() - dimensions.get(0)) / 2,
+                    (vidmode.height() - dimensions.get(1)) / 2
             );
         } // the stack frame is popped automatically
 
@@ -116,6 +123,9 @@ public class Application {
 
         // Make the window visible
         glfwShowWindow(window);
+
+        GameEngine.input = new Input();
+        GameEngine.input.setWindow(window, dimensions);
     }
 
     private void loop() {
@@ -126,7 +136,7 @@ public class Application {
         // bindings available for use.
         GL.createCapabilities();
 
-        glViewport(0, 0, 800, 600);
+        glViewport(0, 0, GameEngine.input.getScreenWidth(), GameEngine.input.getScreenHeight());
 
         // Set the clear color
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
