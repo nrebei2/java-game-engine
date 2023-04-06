@@ -4,10 +4,13 @@ import game.components.Camera;
 import game.components.Mesh;
 import game.components.Transform;
 import util.Geometry;
+import util.Matrix4;
 import util.ShaderProgram;
 import util.Vector3;
 import util.attributes.FloatAttribute;
 import util.ecs.Engine;
+
+import java.util.Arrays;
 
 public class MainMode implements Screen {
     /**
@@ -18,7 +21,7 @@ public class MainMode implements Screen {
     public MainMode() {
         engine = new Engine();
 
-        // 1x1x1 Cube vertices
+        // 1x1x1 cube
         float[] vertices = {
                 -0.5f, -0.5f, -0.5f,
                 0.5f, -0.5f, -0.5f,
@@ -73,8 +76,8 @@ public class MainMode implements Screen {
         engine.createEntity(
                 cube,
                 new Transform(
-                        new Vector3(0, 0, 0),
-                        new Vector3((float)Math.PI/2, (float)Math.PI/4, (float)Math.PI/5),
+                        new Vector3(3, 0, 0),
+                        new Vector3(),
                         new Vector3(1, 1, 1)
                 )
         );
@@ -82,7 +85,7 @@ public class MainMode implements Screen {
         Camera camera = new Camera(
                 new Vector3(),
                 new Vector3(),
-                0.001f, 100, (float) Math.PI, 8 / 6);
+                0.001f, 100, (float) Math.PI /2, 8 / 6);
 
         engine.createEntity(camera);
 
