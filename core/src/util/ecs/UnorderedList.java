@@ -9,8 +9,8 @@ import java.util.*;
  */
 public class UnorderedList<T extends Identifiable> extends AbstractList<T> implements List<T>, RandomAccess {
     /** capacity = entities.length */
-    Object[] elements;
-    int size;
+    private Object[] elements;
+    private int size;
 
     public UnorderedList() {
         this(10);

@@ -7,15 +7,15 @@ import java.util.Map;
  * Entity part of the ECS. No state other than the components it holds.
  */
 public final class Entity extends Identifiable {
-    /** cache[c] = comp iff component comp is attached to this entity with class c */
-    Map<Class<?>, Object> cache;
+    /** components[c] = comp iff component comp is attached to this entity with class c */
+    Map<Class<?>, Object> components;
 
-    /** Whether systems will be able to */
-    boolean enabled;
+    /** Whether systems will be able to access components of this entity. */
+    private boolean enabled;
 
     public Entity() {
-        cache = new HashMap<>();
-        enabled = true;
+        components = new HashMap<>();
+        enabled = false;
     }
 
     public void setEnabled(boolean enabled) {
@@ -33,10 +33,10 @@ public final class Entity extends Identifiable {
      * @throws RuntimeException if you assign a component of an already attached class
      */
     public Entity add(Object component) {
-        if (cache.containsKey(component.getClass())) {
+        if (components.containsKey(component.getClass())) {
             throw new RuntimeException("Entity can only have at most one component of a given class!");
         }
-        cache.put(component.getClass(), component);
+        components.put(component.getClass(), component);
         return this;
     }
 
@@ -45,14 +45,14 @@ public final class Entity extends Identifiable {
      * @return null if there is no component, the actual component otherwise
      */
     public <T> T getComponent(Class<T> component) {
-        return (T)cache.get(component);
+        return (T) components.get(component);
     }
 
     /**
      * Removes a component if present
      */
     public Object remove(Object component) {
-        return cache.remove(component.getClass());
+        return components.remove(component.getClass());
     }
 
     /**
@@ -60,25 +60,25 @@ public final class Entity extends Identifiable {
      * @return the component that was removed, null oth.
      */
     public Object removeType(Class<?> component) {
-        return cache.remove(component);
+        return components.remove(component);
     }
 
     /**
      * @return Whether the specified component is present (==).
      */
     public boolean contains(Object component) {
-        return cache.get(component.getClass()) == component;
+        return components.get(component.getClass()) == component;
     }
 
     /**
      * @return Whether there is a component of the specified class.
      */
     public boolean containsType(Class<?> component) {
-        return cache.containsKey(component);
+        return components.containsKey(component);
     }
 
     public void dispose() {
-        cache = null;
+        components = null;
     }
 
 }

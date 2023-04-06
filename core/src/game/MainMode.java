@@ -32,8 +32,9 @@ public class MainMode implements Screen {
 
         // Basic rendering system with camera
         engine.addSystem((engine) -> {
-            var camera = engine.findEntitiesWith(Camera.class).iterator().next();
-            engine.findEntitiesWith(Mesh.class, Transform.class).forEach((pair -> {
+            var camera = engine.findEntitiesWith(Camera.class).iterator().next().components;
+            engine.findEntitiesWith(Mesh.class, Transform.class).forEach((result -> {
+                var pair = result.components;
                 Mesh mesh = pair.comp1;
                 Transform transform = pair.comp2;
                 mesh.setCombinedMatrix(camera.getViewProj());
