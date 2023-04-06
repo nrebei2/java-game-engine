@@ -18,51 +18,90 @@ public class MainMode implements Screen {
     public MainMode() {
         engine = new Engine();
 
-        Mesh triangle = new Mesh(new ShaderProgram("cube"));
+        // 1x1x1 Cube vertices
+        float[] vertices = {
+                -0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                0.5f, 0.5f, -0.5f,
+                0.5f, 0.5f, -0.5f,
+                -0.5f, 0.5f, -0.5f,
+                -0.5f, -0.5f, -0.5f,
+
+                -0.5f, -0.5f, 0.5f,
+                0.5f, -0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                -0.5f, 0.5f, 0.5f,
+                -0.5f, -0.5f, 0.5f,
+
+                -0.5f, 0.5f, 0.5f,
+                -0.5f, 0.5f, -0.5f,
+                -0.5f, -0.5f, -0.5f,
+                -0.5f, -0.5f, -0.5f,
+                -0.5f, -0.5f, 0.5f,
+                -0.5f, 0.5f, 0.5f,
+
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+
+                -0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, 0.5f,
+                0.5f, -0.5f, 0.5f,
+                -0.5f, -0.5f, 0.5f,
+                -0.5f, -0.5f, -0.5f,
+
+                -0.5f, 0.5f, -0.5f,
+                0.5f, 0.5f, -0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                -0.5f, 0.5f, 0.5f,
+                -0.5f, 0.5f, -0.5f,
+        };
+
+        Mesh cube = new Mesh(new ShaderProgram("cube"));
         Geometry tri = new Geometry()
                 .addAttribute("aPos",
-                        new FloatAttribute(3, new float[]{
-                                0.5f, 0.5f, 0.0f,  // top right
-                                0.5f, -0.5f, 0.0f,  // bottom right
-                                -0.5f, -0.5f, 0.0f,  // bottom left
-                                -0.5f, 0.5f, 0.0f   // top left
-                        }, false))
-                .setIndices(new int[]{
-                                0, 1, 3,   // first triangle
-                                1, 2, 3    // second triangle
-                        }
-                );
-        triangle.setGeometry(tri);
+                        new FloatAttribute(3, vertices, false));
+        cube.setGeometry(tri);
 
         // Entity creation
         engine.createEntity(
-                triangle,
+                cube,
                 new Transform(
-                        new Vector3(3, 3, -3),
-                        new Vector3((float)Math.PI/2, (float)Math.PI/4, (float)Math.PI/5),
+                        new Vector3(0, 0, 0),
+                        new Vector3((float) Math.PI / 2, (float) Math.PI / 4, (float) Math.PI / 5),
                         new Vector3(1, 1, 1)
                 )
         );
 
-        engine.createEntity(
-                new Camera(
-                        new Vector3(),
-                        new Vector3(),
-                        0.01f, 100, (float) Math.PI, 8 / 6)
-        );
+        Camera camera = new Camera(
+                new Vector3(),
+                new Vector3(),
+                0.001f, 100, (float) Math.PI, 8 / 6);
+
+        engine.createEntity(camera);
 
         // Basic rendering system with camera
         engine.addSystem((engine, delta) -> {
-            var camera = engine.findEntitiesWith(Camera.class).iterator().next().components;
+            var cam = engine.findEntitiesWith(Camera.class).iterator().next().components;
             engine.findEntitiesWith(Mesh.class, Transform.class).forEach((result -> {
                 var pair = result.components;
                 Mesh mesh = pair.comp1;
                 Transform transform = pair.comp2;
-                mesh.setCombinedMatrix(camera.getViewProj());
+                mesh.setCombinedMatrix(cam.getViewProj());
                 mesh.setModelMatrix(transform.getModel());
                 mesh.render();
             }));
         });
+
+        // Camera control system
+        CameraController controller = new CameraController(camera, 1, 2, 0.003f);
+        engine.addSystem(controller);
     }
 
     @Override

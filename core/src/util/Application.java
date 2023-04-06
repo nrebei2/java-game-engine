@@ -103,7 +103,7 @@ public class Application {
             glfwGetWindowSize(window, pWidth, pHeight);
 
             dimensions.put(0, pWidth.get(0));
-            dimensions.put(0, pHeight.get(0));
+            dimensions.put(1, pHeight.get(0));
 
             // Get the resolution of the primary monitor
             GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -121,9 +121,14 @@ public class Application {
         // Enable v-sync
         glfwSwapInterval(1);
 
+        // Capture the mouse
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
         // Make the window visible
         glfwShowWindow(window);
 
+        // Update mouse cursor
+        glfwPollEvents();
         GameEngine.input = new Input();
         GameEngine.input.setWindow(window, dimensions);
     }
@@ -149,6 +154,7 @@ public class Application {
 
         listener.create();
         double lastFrame = glfwGetTime();
+
         while (!glfwWindowShouldClose(window)) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
@@ -157,6 +163,8 @@ public class Application {
             lastFrame = curFrame;
 
             glfwSwapBuffers(window); // swap the color buffers
+
+            GameEngine.input.prepareNext();
 
             // Poll for window events. The key callback above will only be
             // invoked during this call.

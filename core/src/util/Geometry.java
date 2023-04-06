@@ -43,7 +43,7 @@ public class Geometry {
     }
 
     /**
-     * @param indices
+     * @param indices null to remove indices
      * @return same geometry object for chaining
      */
     public Geometry setIndices(int[] indices) {

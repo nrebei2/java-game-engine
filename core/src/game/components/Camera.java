@@ -7,9 +7,12 @@ import util.Vector3;
  * Camera component
  */
 public class Camera {
-    private Vector3 pos;
     private Matrix4 proj;
-    private Vector3 euler_ang;
+
+    /**
+     * Transform of this camera
+     */
+    private Transform transform;
 
     /**
      * @param pos
@@ -20,17 +23,18 @@ public class Camera {
      * @param asp
      */
     public Camera(Vector3 pos, Vector3 euler_angles, float near, float far, float fov, float asp) {
-        this.pos = pos;
-        this.euler_ang = euler_angles;
+        this.transform = new Transform(pos, euler_angles, new Vector3(1, 1, 1));
         proj = Matrix4.projection(near, far, fov, asp);
     }
 
     public Matrix4 getViewProj() {
-        // view = (R^-1)(T^-1) = (R^T)(T^-1)
-        Matrix4 trans = new Matrix4();
-        trans.trn(-pos.x, -pos.y, -pos.z);
-        Matrix4 view = Matrix4.rotate_xyz(euler_ang.x, euler_ang.y, euler_ang.z).tra().mul(trans);
+        // view = (R^-1)(T^-1) = (TR)^-1
+        Matrix4 view = transform.getModel().inv();
         // first view, then proj
         return view.mulLeft(proj);
+    }
+
+    public Transform getTransform() {
+        return transform;
     }
 }
