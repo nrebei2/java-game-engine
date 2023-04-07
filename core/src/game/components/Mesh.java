@@ -1,9 +1,6 @@
 package game.components;
 
-import util.Geometry;
-import util.Matrix4;
-import util.ShaderProgram;
-import util.VertexAttribute;
+import util.*;
 import util.attributes.ByteAttribute;
 import util.attributes.FloatAttribute;
 import util.attributes.IntAttribute;
@@ -17,13 +14,13 @@ import static org.lwjgl.opengl.GL43.*;
  * A mesh component consists of vertices (held by its geometry) and a shader.
  */
 public class Mesh {
-    private ShaderProgram program;
     private int VAO;
     private Geometry geo;
+    private Material mat;
 
-    public Mesh(ShaderProgram program) {
+    public Mesh(Material material) {
         VAO = glGenVertexArrays();
-        this.program = program;
+        mat = material;
     }
 
     public void setGeometry(Geometry geo) {
@@ -33,8 +30,8 @@ public class Mesh {
             // Check if shader attribute and geometry attribute match names
             String name = entry.getKey();
             VertexAttribute attribute = entry.getValue();
-            if (!program.attributes.containsKey(name)) continue;
-            int location = program.attributes.get(name);
+            if (!mat.shader.attributes.containsKey(name)) continue;
+            int location = mat.shader.attributes.get(name);
 
             // Generate VBO, set attrib pointer
             int VBO = glGenBuffers();
@@ -73,7 +70,21 @@ public class Mesh {
     public void render() {
         if (geo == null) return;
 
-        program.bind();
+        mat.shader.bind();
+
+        // Bind textures from material
+        int i = 0;
+        for (Map.Entry<Material.Texture, Integer> entry : mat.texs.entrySet())
+        {
+            if (mat.shader.uniforms.containsKey(entry.getValue()))
+            {
+                glActiveTexture(GL_TEXTURE0 + i);
+                glBindTexture(GL_TEXTURE_2D, entry.getValue());
+                mat.shader.setInt(entry.getKey().uniformName, i);
+            }
+            i += 1;
+        }
+
         glBindVertexArray(VAO);
         if (geo.indices != null) {
             glDrawElements(GL_TRIANGLES, geo.indices.length, GL_UNSIGNED_INT, 0);
@@ -87,13 +98,13 @@ public class Mesh {
      * Sets of view-projection matrix for rendering of this mesh.
      */
     public void setCombinedMatrix(Matrix4 mat) {
-        program.setMat4("u_viewProj", mat);
+        this.mat.shader.setMat4("u_viewProj", mat);
     }
 
     /**
      * Sets the model matrix for this mesh.
      */
     public void setModelMatrix(Matrix4 model) {
-        program.setMat4("u_model", model);
+        mat.shader.setMat4("u_model", model);
     }
 }

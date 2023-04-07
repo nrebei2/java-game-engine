@@ -9,6 +9,7 @@ public class Main {
         Config config = new Config();
         config.height = 1200;
         config.width = 1600;
+        config.fullScreen = true;
         new Application(new Root(), config);
     }
 }

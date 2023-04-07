@@ -62,18 +62,19 @@ public class Application {
         glfwWindowHint(GLFW_RESIZABLE, config.resizable ? GLFW_TRUE : GLFW_FALSE); // the window will be resizable
 
         // Create the window
+        // TODO Maybe because im just on linux, but setting monitor to NULL anytime will result in tearing
         window = glfwCreateWindow(
-                config.width, config.height, config.title, config.fullScreen ? glfwGetPrimaryMonitor() : NULL, NULL
+                config.width, config.height, config.title, glfwGetPrimaryMonitor(), NULL
         );
         if (window == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
 
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-        });
+        // Make the OpenGL context current
+        glfwMakeContextCurrent(window);
+        // Enable v-sync
+        glfwSwapInterval(1);
 
+        // Resize callback
         glfwSetFramebufferSizeCallback(window, new GLFWFramebufferSizeCallback() {
             @Override
             public void invoke(long window, int nWidth, int nHeight) {
@@ -116,10 +117,6 @@ public class Application {
             );
         } // the stack frame is popped automatically
 
-        // Make the OpenGL context current
-        glfwMakeContextCurrent(window);
-        // Enable v-sync
-        glfwSwapInterval(1);
 
         // Capture the mouse
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
@@ -150,7 +147,6 @@ public class Application {
 
         glEnable(GL_DEPTH_TEST);
 
-        //
         listener.create();
 
         double lastFrame = glfwGetTime();

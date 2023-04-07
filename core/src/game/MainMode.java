@@ -3,14 +3,14 @@ package game;
 import game.components.Camera;
 import game.components.Mesh;
 import game.components.Transform;
-import util.GameEngine;
-import util.Geometry;
-import util.ShaderProgram;
-import util.Vector3;
+import util.*;
 import util.attributes.FloatAttribute;
 import util.ecs.Engine;
 
+import static org.lwjgl.glfw.GLFW.glfwSetWindowMonitor;
+import static org.lwjgl.opengl.GL11.GL_DONT_CARE;
 import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class MainMode implements Screen {
     /**
@@ -71,10 +71,61 @@ public class MainMode implements Screen {
                 -0.5f, 0.5f, -0.5f,
         };
 
-        Mesh cube = new Mesh(new ShaderProgram("cube"));
+        float[] uvs = {
+                  0.0f, 0.0f,
+                 1.0f, 0.0f,
+                 1.0f, 1.0f,
+                 1.0f, 1.0f,
+                  0.0f, 1.0f,
+                  0.0f, 0.0f,
+
+                  0.0f, 0.0f,
+                 1.0f, 0.0f,
+                 1.0f, 1.0f,
+                 1.0f, 1.0f,
+                  0.0f, 1.0f,
+                  0.0f, 0.0f,
+
+                  1.0f, 0.0f,
+                  1.0f, 1.0f,
+                  0.0f, 1.0f,
+                  0.0f, 1.0f,
+                  0.0f, 0.0f,
+                  1.0f, 0.0f,
+
+                 1.0f, 0.0f,
+                 1.0f, 1.0f,
+                 0.0f, 1.0f,
+                 0.0f, 1.0f,
+                 0.0f, 0.0f,
+                 1.0f, 0.0f,
+
+                  0.0f, 1.0f,
+                 1.0f, 1.0f,
+                 1.0f, 0.0f,
+                 1.0f, 0.0f,
+                  0.0f, 0.0f,
+                  0.0f, 1.0f,
+
+                  0.0f, 1.0f,
+                 1.0f, 1.0f,
+                 1.0f, 0.0f,
+                 1.0f, 0.0f,
+                  0.0f, 0.0f,
+                  0.0f, 1.0f
+        };
+
+        Mesh cube = new Mesh(
+                new Material("cube",
+                        new Material.Texture("awesomeface.png", "texture")
+                )
+        );
         Geometry tri = new Geometry()
                 .addAttribute("aPos",
-                        new FloatAttribute(3, vertices, false));
+                        new FloatAttribute(3, vertices, false)
+                )
+                .addAttribute("aTexCoord",
+                        new FloatAttribute(2, uvs, false));
         cube.setGeometry(tri);
 
         // Entity creation
