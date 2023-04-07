@@ -1,4 +1,4 @@
-package util;
+package util.opengl;
 
 /**
  * Abstraction of a vertex attribute passed into some location in a vertex shader

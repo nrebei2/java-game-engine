@@ -1,6 +1,6 @@
-package util;
+package util.opengl;
 
-import util.attributes.FloatAttribute;
+import util.opengl.attributes.FloatAttribute;
 
 public class MeshPrimitives {
     /**

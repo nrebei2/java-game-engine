@@ -1,4 +1,4 @@
-package util;
+package util.opengl;
 
 import org.lwjgl.system.MemoryStack;
 

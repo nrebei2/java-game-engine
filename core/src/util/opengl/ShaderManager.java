@@ -1,4 +1,4 @@
-package util;
+package util.opengl;
 
 import java.util.HashMap;
 import java.util.Map;

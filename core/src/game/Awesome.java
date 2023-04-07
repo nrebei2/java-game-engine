@@ -2,17 +2,14 @@ package game;
 
 import game.components.Camera;
 import game.components.Transform;
-import util.GameEngine;
-import util.Mesh;
-import util.MeshPrimitives;
-import util.Vector3;
+import util.*;
 import util.ecs.Engine;
+import util.opengl.Mesh;
+import util.opengl.MeshPrimitives;
 
 import java.util.Random;
 
-import static org.lwjgl.opengl.GL11.glViewport;
-
-public class MainMode implements Screen {
+public class Awesome extends ScreenController {
     /**
      * ECS engine
      */
@@ -24,7 +21,7 @@ public class MainMode implements Screen {
     Camera camera;
     private final Random gen;
 
-    public MainMode() {
+    public Awesome() {
         engine = new Engine();
         this.gen = new Random();
 
@@ -70,37 +67,33 @@ public class MainMode implements Screen {
         return min + gen.nextFloat() * (max - min);
     }
 
-    @Override
     public void show() {
+        camera.getTransform().setRotation(new Vector3());
+        camera.getTransform().setPosition(new Vector3());
     }
 
-    @Override
     public void render(float delta) {
+        super.render(delta);
         engine.run(delta);
     }
 
-    @Override
     public void resize(int width, int height) {
-        glViewport(0, 0, width, height);
+        super.resize(width, height);
         camera.setAsp((float) width / height);
     }
 
-    @Override
     public void pause() {
 
     }
 
-    @Override
     public void resume() {
 
     }
 
-    @Override
     public void hide() {
 
     }
 
-    @Override
     public void dispose() {
 
     }

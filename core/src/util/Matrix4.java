@@ -136,6 +136,7 @@ public class Matrix4 {
         float cZ = (float) Math.cos(rotZ);
 
         // Column major order
+        // Z * Y * X
         rotCache[0] = (cY * cZ);
         rotCache[1] = (cY * sZ);
         rotCache[2] = (-sY);
@@ -158,7 +159,7 @@ public class Matrix4 {
     /**
      * Sets the matrix to a projection matrix with a near- and far plane, a field of view in degrees and an aspect ratio.
      * Note this matrix assumes the camera is looking along +x with its up vector at +z.
-     * Therefore, it firsts rotates the world such that the camera looks towards -z.
+     * Therefore, it firsts rotates the world such that the camera looks towards -z (rotate x -PI/2, then rotate y PI/2).
      *
      * @param near The near plane
      * @param far  The far plane
@@ -171,6 +172,7 @@ public class Matrix4 {
         float tanFov = 1.0f / (float) Math.tan(fovy / 2);
 
         // Column major order
+        // = orthographic * projection * rotation
         return new Matrix4(new float[]{
                 0, 0, (far + near) * farNear, 1,
                 (-1 / asp) * tanFov, 0, 0, 0,

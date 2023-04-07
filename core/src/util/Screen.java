@@ -1,4 +1,4 @@
-package game;
+package util;
 
 public interface Screen {
     /**

@@ -1,5 +1,3 @@
-package opengl;
-
 import game.Root;
 import util.Application;
 import util.Config;

@@ -13,7 +13,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 /**
- * Interface to input functions. Most functions are static.
+ * Interface to input functions.
  */
 public final class Input {
     // The window handle assigned to this input
@@ -31,7 +31,7 @@ public final class Input {
      * The difference (in pixels) between the current pointer location and the last pointer location
      */
     private float deltaX, deltaY = 0;
-    private IntBuffer dimensions;
+    private int[] dimensions;
 
     private int count = 0;
 
@@ -58,22 +58,14 @@ public final class Input {
 
     /**
      * @param handle     of current window to set this class to listen input events from
-     * @param dimensions 2 element (width, height) buffer holding screen dimensions
+     * @param dimensions 2 element (width, height) array holding screen dimensions
      */
-    public void setWindow(long handle, IntBuffer dimensions) {
+    public void setWindow(long handle, int[] dimensions) {
         this.dimensions = dimensions;
         this.handle = handle;
         pressedButtons = new BitSet(GLFW_KEY_LAST);
         GLFW.glfwSetKeyCallback(handle, keyCallback);
         GLFW.glfwSetScrollCallback(handle, scrollCallback);
-    }
-
-    /**
-     * Prepare attributes for next frame.
-     */
-    public void prepareNext() {
-        deltaX = 0;
-        deltaY = 0;
     }
 
     /**
@@ -97,11 +89,11 @@ public final class Input {
     }
 
     public int getScreenWidth() {
-        return dimensions.get(0);
+        return dimensions[0];
     }
 
     public int getScreenHeight() {
-        return dimensions.get(1);
+        return dimensions[1];
     }
 
     /**

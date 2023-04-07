@@ -1,4 +1,4 @@
-package game;
+package util;
 
 public abstract class Game {
     protected Screen curScreen;
@@ -50,7 +50,7 @@ public abstract class Game {
         if (this.curScreen != null) curScreen.hide();
         if (screen != null) {
             curScreen = screen;
-            screen.resume();
+            screen.show();
         }
     }
 }

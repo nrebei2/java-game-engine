@@ -1,6 +1,6 @@
-package util.attributes;
+package util.opengl.attributes;
 
-import util.VertexAttribute;
+import util.opengl.VertexAttribute;
 
 import static org.lwjgl.opengl.GL11.GL_BYTE;
 

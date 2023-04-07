@@ -1,6 +1,7 @@
-package util;
+package util.opengl;
 
 import org.lwjgl.system.MemoryStack;
+import util.Matrix4;
 
 import java.nio.IntBuffer;
 import java.nio.file.Files;

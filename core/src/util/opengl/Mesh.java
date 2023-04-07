@@ -1,11 +1,11 @@
-package util;
+package util.opengl;
 
-import util.attributes.ByteAttribute;
-import util.attributes.FloatAttribute;
-import util.attributes.IntAttribute;
+import util.Matrix4;
+import util.opengl.attributes.ByteAttribute;
+import util.opengl.attributes.FloatAttribute;
+import util.opengl.attributes.IntAttribute;
 
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL43.*;
@@ -50,7 +50,6 @@ public class Mesh {
             switch (attribute.type) {
                 case GL_FLOAT -> {
                     FloatAttribute attr = (FloatAttribute) attribute;
-                    System.out.println(FloatBuffer.wrap(attr.data).get(2));
                     glBufferData(GL_ARRAY_BUFFER, attr.data, attribute.dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
                 }
                 case GL_UNSIGNED_INT -> {

@@ -1,6 +1,5 @@
 package util;
 
-import game.Game;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -18,6 +17,9 @@ import static org.lwjgl.opengl.GL43.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+/**
+ * Initializes the window and graphics
+ */
 public class Application {
     // The window handle
     private long window;
@@ -25,7 +27,8 @@ public class Application {
     // The current listener
     private Game listener;
 
-    IntBuffer dimensions = BufferUtils.createIntBuffer(2);
+    // two element int array holding (width, height) dimensions
+    int[] dimensions = new int[2];
 
     public Application(Game listener, Config config) {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
@@ -78,8 +81,8 @@ public class Application {
         glfwSetFramebufferSizeCallback(window, new GLFWFramebufferSizeCallback() {
             @Override
             public void invoke(long window, int nWidth, int nHeight) {
-                dimensions.put(0, nWidth);
-                dimensions.put(1, nHeight);
+                dimensions[0] = nWidth;
+                dimensions[1] = nHeight;
                 listener.resize(nWidth, nHeight);
             }
         });
@@ -103,8 +106,8 @@ public class Application {
             // Get the window size passed to glfwCreateWindow
             glfwGetWindowSize(window, pWidth, pHeight);
 
-            dimensions.put(0, pWidth.get(0));
-            dimensions.put(1, pHeight.get(0));
+            dimensions[0] = pWidth.get(0);
+            dimensions[1] = pHeight.get(0);
 
             // Get the resolution of the primary monitor
             GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -112,8 +115,8 @@ public class Application {
             // Center the window
             glfwSetWindowPos(
                     window,
-                    (vidmode.width() - dimensions.get(0)) / 2,
-                    (vidmode.height() - dimensions.get(1)) / 2
+                    (vidmode.width() - dimensions[0]) / 2,
+                    (vidmode.height() - dimensions[1]) / 2
             );
         } // the stack frame is popped automatically
 
@@ -142,9 +145,6 @@ public class Application {
         // Set the clear color
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-        // Run the rendering loop until the user has attempted to close
-        // the window or has pressed the ESCAPE key.
-
         // Enable states
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
@@ -163,13 +163,12 @@ public class Application {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
             double curFrame = glfwGetTime();
+            // FPS = 1/delta
             listener.render((float) (curFrame - lastFrame));
             lastFrame = curFrame;
 
             // Since v-sync is on this call stalls
             glfwSwapBuffers(window); // swap the color buffers
-
-            GameEngine.input.prepareNext();
 
             // Poll for window events. The key callback above will only be
             // invoked during this call.
