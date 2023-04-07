@@ -123,6 +123,7 @@ public class Application {
 
         // Capture the mouse
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
         // Make the window visible
         glfwShowWindow(window);
@@ -149,11 +150,12 @@ public class Application {
 
         glEnable(GL_DEPTH_TEST);
 
-
+        //
         listener.create();
-        double lastFrame = glfwGetTime();
 
+        double lastFrame = glfwGetTime();
         while (!glfwWindowShouldClose(window)) {
+            GameEngine.input.update();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
             double curFrame = glfwGetTime();

@@ -81,6 +81,7 @@ public class Matrix4 {
     public static final int M33 = 15;
 
     static final Matrix4 tmpMat = new Matrix4();
+    private static float[] rotCache = new float[16];
 
     /**
      * Column major order
@@ -124,7 +125,7 @@ public class Matrix4 {
      * @param rotX Rotation around x-axis (radians)
      * @param rotY Rotation around y-axis (radians)
      * @param rotZ Rotation around z-axis (radians)
-     * @return Affine matrix holding rotation information
+     * @return 16 element (column order) float array. Note it is a static reference, therefore DON'T mutate it.
      */
     public static float[] rotate_xyz(float rotX, float rotY, float rotZ) {
         float sX = (float) Math.sin(rotX);
@@ -135,12 +136,23 @@ public class Matrix4 {
         float cZ = (float) Math.cos(rotZ);
 
         // Column major order
-        return new float[]{
-                (cY * cZ), (cY * sZ), (-sY), 0,
-                (sX * sY * cZ - cX * sZ), (sX * sY * sZ + cX * cZ), (sX * cY), 0,
-                (cX * sY * cZ + sX * sZ), (cX * sY * sZ - sX * cZ), (cX * cY), 0,
-                0, 0, 0, 1
-        };
+        rotCache[0] = (cY * cZ);
+        rotCache[1] = (cY * sZ);
+        rotCache[2] = (-sY);
+        rotCache[3] = 0;
+        rotCache[4] = (sX * sY * cZ - cX * sZ);
+        rotCache[5] = (sX * sY * sZ + cX * cZ);
+        rotCache[6] = (sX * cY);
+        rotCache[7] = 0;
+        rotCache[8] = (cX * sY * cZ + sX * sZ);
+        rotCache[9] = (cX * sY * sZ - sX * cZ);
+        rotCache[10] = (cX * cY);
+        rotCache[11] = 0;
+        rotCache[12] = 0;
+        rotCache[13] = 0;
+        rotCache[14] = 0;
+        rotCache[15] = 1;
+        return rotCache;
     }
 
     /**

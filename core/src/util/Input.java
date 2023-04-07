@@ -34,6 +34,8 @@ public final class Input {
     private float deltaX, deltaY = 0;
     private IntBuffer dimensions;
 
+    private int count = 0;
+
     public Input() {
     }
 
@@ -55,20 +57,6 @@ public final class Input {
         }
     };
 
-    private GLFWCursorPosCallback cursorPosCallback = new GLFWCursorPosCallback() {
-        @Override
-        public void invoke(long window, double xpos, double ypos) {
-            if (window != handle) return;
-            // invert ypos so y is relative to bottom edge
-            ypos = getScreenHeight() - ypos;
-
-            deltaX = (float) (xpos - mouseX);
-            deltaY = (float) (ypos - mouseY);
-            mouseY = (int) ypos;
-            mouseX = (int) xpos;
-        }
-    };
-
     /**
      * @param handle     of current window to set this class to listen input events from
      * @param dimensions 2 element (width, height) buffer holding screen dimensions
@@ -79,16 +67,6 @@ public final class Input {
         pressedButtons = new BitSet(GLFW_KEY_LAST);
         GLFW.glfwSetKeyCallback(handle, keyCallback);
         GLFW.glfwSetScrollCallback(handle, scrollCallback);
-        GLFW.glfwSetCursorPosCallback(handle, cursorPosCallback);
-
-        // Set initial cursor position
-        try (MemoryStack stack = stackPush()) {
-            DoubleBuffer x = stack.mallocDouble(1); // int*
-            DoubleBuffer y = stack.mallocDouble(1); // int*
-            glfwGetCursorPos(handle, x, y);
-            this.mouseX = (int) x.get(0);
-            this.mouseY = getScreenHeight() - (int) y.get(0);
-        }
     }
 
     /**
@@ -97,7 +75,24 @@ public final class Input {
     public void prepareNext() {
         deltaX = 0;
         deltaY = 0;
+    }
 
+    /** Update attributes of the class */
+    public void update() {
+        // Set initial cursor position
+        try (MemoryStack stack = stackPush()) {
+            DoubleBuffer x = stack.mallocDouble(1); // int*
+            DoubleBuffer y = stack.mallocDouble(1); // int*
+            glfwGetCursorPos(handle, x, y);
+            int ypos = getScreenHeight() - (int) y.get(0);
+            int xpos = (int) x.get(0);
+            deltaX = (float) (xpos - mouseX);
+            deltaY = (float) (ypos - mouseY);
+            //count++;
+            //System.out.printf("count: %d\n", count);
+            mouseY = ypos;
+            mouseX = xpos;
+        }
     }
 
     public int getScreenWidth() {

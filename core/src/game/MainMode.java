@@ -97,25 +97,23 @@ public class MainMode implements Screen {
 
         // Basic rendering system with camera
         engine.addSystem((engine, delta) -> {
-            var cam = engine.findEntitiesWith(Camera.class).iterator().next().components;
             engine.findEntitiesWith(Mesh.class, Transform.class).forEach((result -> {
                 var pair = result.components;
                 Mesh mesh = pair.comp1;
                 Transform transform = pair.comp2;
-                mesh.setCombinedMatrix(cam.getViewProj());
+                mesh.setCombinedMatrix(camera.getViewProj());
                 mesh.setModelMatrix(transform.getModel());
                 mesh.render();
             }));
         });
 
         // Camera control system
-        CameraController controller = new CameraController(camera, 1, 2, 0.03f);
+        CameraController controller = new CameraController(camera, 1, 2, 0.1f);
         engine.addSystem(controller);
     }
 
     @Override
     public void show() {
-
     }
 
     @Override

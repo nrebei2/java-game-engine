@@ -3,6 +3,9 @@ package game;
 public abstract class Game {
     protected Screen curScreen;
 
+    /**
+     * Called right after the application has initialized.
+     */
     public abstract void create();
 
     /**
@@ -14,14 +17,17 @@ public abstract class Game {
         if (curScreen != null) curScreen.render(delta);
     }
 
+    /** Called when the window resizes */
     public void resize(int width, int height) {
         if (curScreen != null) curScreen.resize(width, height);
     }
 
+    /** Called when the window is minimized */
     public void pause() {
         if (curScreen != null) curScreen.pause();
     }
 
+    /** Called when the window is restored */
     public void resume() {
         if (curScreen != null) curScreen.resume();
     }
@@ -31,6 +37,7 @@ public abstract class Game {
      */
     public abstract void dispose();
 
+    /** Sets the current screen for this Game */
     public void setScreen(Screen screen) {
         if (this.curScreen != null) curScreen.hide();
         if (screen != null) {
@@ -38,9 +45,4 @@ public abstract class Game {
             screen.resume();
         }
     }
-
-    public Screen getScreen() {
-        return curScreen;
-    }
-
 }
