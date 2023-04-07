@@ -2,6 +2,7 @@ package game;
 
 import game.components.Camera;
 import util.GameEngine;
+import util.Matrix4;
 import util.Vector3;
 import util.ecs.Engine;
 import util.ecs.System;
@@ -39,38 +40,33 @@ public class CameraController implements System {
         if (GameEngine.input.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) delta *= shiftScale;
 
         Vector3 angles = camera.getTransform().getRotation();
-        float sY = (float)Math.sin(angles.y);
-        float cY = (float)Math.cos(angles.y);
-        float sZ = (float)Math.sin(angles.z);
-        float cZ = (float)Math.cos(angles.z);
+        float[] rotMat = Matrix4.rotate_xyz(angles.x, angles.y, angles.z);
 
         // Forward vector
-        float f_x = cY*cZ;
-        float f_y = cY*sZ;
-        float f_z = sY;
+        float[] forward = {1, 0, 0};
+        Matrix4.mulVec(rotMat, forward);
 
         // Right vector
-        float r_x = sZ;
-        float r_y = -cZ;
-        float r_z = 0;
+        float[] right = {0, -1, 0};
+        Matrix4.mulVec(rotMat, right);
 
         Vector3 position = camera.getTransform().getPosition();
         if (GameEngine.input.isKeyPressed(GLFW_KEY_W)) {
-            position.add(f_x * delta, f_y * delta, f_z * delta);
+            position.add(forward[0] * delta, forward[1] * delta, forward[2] * delta);
         }
         if (GameEngine.input.isKeyPressed(GLFW_KEY_S)) {
-            position.sub(f_x * delta, f_y * delta, f_z * delta);
+            position.sub(forward[0] * delta, forward[1] * delta, forward[2] * delta);
         }
         if (GameEngine.input.isKeyPressed(GLFW_KEY_D)) {
-            position.add(r_x * delta, r_y * delta, r_z * delta);
+            position.add(right[0] * delta, right[1] * delta, right[2] * delta);
         }
         if (GameEngine.input.isKeyPressed(GLFW_KEY_A)) {
-            position.sub(r_x * delta, r_y * delta, r_z * delta);
+            position.sub(right[0] * delta, right[1] * delta, right[2] * delta);
         }
         camera.getTransform().setPosition(position);
 
         // Rotation
-        float limit = (float)(Math.PI / 2.0);
+        float limit = (float) (Math.PI / 2.0);
         angles.y = clamp(angles.y - mouseSensivity * GameEngine.input.getDeltaY(), -limit, limit);
         angles.z -= mouseSensivity * GameEngine.input.getDeltaX();
         camera.getTransform().setRotation(angles);

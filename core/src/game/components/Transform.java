@@ -61,13 +61,14 @@ public class Transform {
 
     /**
      * Please do not mutate the returned matrix from this method.
+     *
      * @return The model matrix for this transform (Translation * Rotation * Scale)
      */
     public Matrix4 getModel() {
         if (dirty) {
             modelCache.idt();
             modelCache.trn(position);
-            Matrix4.mul(modelCache.val, Matrix4.rotate_xyz(rotation.x, rotation.y, rotation.z));
+            modelCache.rotate(rotation.x, rotation.y, rotation.z);
             modelCache.scale(scale.x, scale.y, scale.z);
             // modelCache = T * R * S
             dirty = false;

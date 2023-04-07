@@ -120,6 +120,7 @@ public class Matrix4 {
 
     /**
      * Rotates around the x, y, then z axis in order. Uses a right hand rule direction of rotation.
+     *
      * @param rotX Rotation around x-axis (radians)
      * @param rotY Rotation around y-axis (radians)
      * @param rotZ Rotation around z-axis (radians)
@@ -135,11 +136,11 @@ public class Matrix4 {
 
         // Column major order
         return new float[]{
-                        (cY * cZ), (cY * sZ), (-sY), 0,
-                        (sX * sY * cZ - cX * sZ), (sX * sY * sZ + cX * cZ), (sX * cY), 0,
-                        (cX * sY * cZ + sX * sZ), (cX * sY * sZ - sX * cZ), (cX * cY), 0,
-                        0, 0, 0, 1
-                };
+                (cY * cZ), (cY * sZ), (-sY), 0,
+                (sX * sY * cZ - cX * sZ), (sX * sY * sZ + cX * cZ), (sX * cY), 0,
+                (cX * sY * cZ + sX * sZ), (cX * sY * sZ - sX * cZ), (cX * cY), 0,
+                0, 0, 0, 1
+        };
     }
 
     /**
@@ -147,10 +148,10 @@ public class Matrix4 {
      * Note this matrix assumes the camera is looking along +x with its up vector at +z.
      * Therefore, it firsts rotates the world such that the camera looks towards -z.
      *
-     * @param near        The near plane
-     * @param far         The far plane
-     * @param fovy        The field of view of the height in radians
-     * @param asp The "width over height" aspect ratio
+     * @param near The near plane
+     * @param far  The far plane
+     * @param fovy The field of view of the height in radians
+     * @param asp  The "width over height" aspect ratio
      * @return This matrix for the purpose of chaining methods together.
      */
     public static Matrix4 projection(float near, float far, float fovy, float asp) {
@@ -291,6 +292,7 @@ public class Matrix4 {
 
     /**
      * Transposes the matrix.
+     *
      * @param val 16 element float array
      */
     public static void tra(float[] val) {
@@ -411,11 +413,14 @@ public class Matrix4 {
         return this;
     }
 
-    /** Computes the inverse of the given matrix. The matrix array is assumed to hold a 4x4 column major matrix as you can get from
+    /**
+     * Computes the inverse of the given matrix. The matrix array is assumed to hold a 4x4 column major matrix as you can get from
      * {@link Matrix4#val}.
+     *
      * @param values the matrix values.
-     * @return false in case the inverse could not be calculated, true otherwise. */
-    public static boolean inv (float[] values) {
+     * @return false in case the inverse could not be calculated, true otherwise.
+     */
+    public static boolean inv(float[] values) {
         float l_det = det(values);
         if (l_det == 0) return false;
         float m00 = values[M12] * values[M23] * values[M31] - values[M13] * values[M22] * values[M31]
@@ -659,9 +664,9 @@ public class Matrix4 {
         float y = vec[0] * mat[M10] + vec[1] * mat[M11] + vec[2] * mat[M12] + vec[3] * mat[M13];
         float z = vec[0] * mat[M20] + vec[1] * mat[M21] + vec[2] * mat[M22] + vec[3] * mat[M23];
         float w = vec[0] * mat[M30] + vec[1] * mat[M31] + vec[2] * mat[M32] + vec[3] * mat[M33];
-        vec[0] = x/w;
-        vec[1] = y/w;
-        vec[2] = z/w;
+        vec[0] = x / w;
+        vec[1] = y / w;
+        vec[2] = z / w;
         vec[3] = 1;
     }
 
@@ -759,10 +764,21 @@ public class Matrix4 {
         return this;
     }
 
-
+    /**
+     * Postmultiplies this matrix with a rotation matrix. See {@link #rotate_xyz(float, float, float)}
+     *
+     * @param rotX Rotation around x-axis (radians)
+     * @param rotY Rotation around y-axis (radians)
+     * @param rotZ Rotation around z-axis (radians)
+     * @return This matrix for the purpose of chaining methods together.
+     */
+    public Matrix4 rotate(float rotX, float rotY, float rotZ) {
+        Matrix4.mul(this.val, Matrix4.rotate_xyz(rotX, rotY, rotZ));
+        return this;
+    }
 
     /**
-     * @return 16 element float array (columnholding scaling information.
+     * @return 16 element float array (column order) holding scaling information.
      */
     public static float[] scl(float scaleX, float scaleY, float scaleZ) {
         float[] val = new float[16];

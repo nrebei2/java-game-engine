@@ -129,16 +129,14 @@ public class Application {
 
         // Update mouse cursor
         glfwPollEvents();
+
+        // Create global input instance
         GameEngine.input = new Input();
         GameEngine.input.setWindow(window, dimensions);
     }
 
     private void loop() {
-        // This line is critical for LWJGL's interoperation with GLFW's
-        // OpenGL context, or any context that is managed externally.
-        // LWJGL detects the context that is current in the current thread,
-        // creates the GLCapabilities instance and makes the OpenGL
-        // bindings available for use.
+        // Critical
         GL.createCapabilities();
 
         glViewport(0, 0, GameEngine.input.getScreenWidth(), GameEngine.input.getScreenHeight());

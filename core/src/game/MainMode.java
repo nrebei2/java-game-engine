@@ -3,20 +3,25 @@ package game;
 import game.components.Camera;
 import game.components.Mesh;
 import game.components.Transform;
+import util.GameEngine;
 import util.Geometry;
-import util.Matrix4;
 import util.ShaderProgram;
 import util.Vector3;
 import util.attributes.FloatAttribute;
 import util.ecs.Engine;
 
-import java.util.Arrays;
+import static org.lwjgl.opengl.GL11.glViewport;
 
 public class MainMode implements Screen {
     /**
      * ECS engine
      */
     Engine engine;
+
+    /**
+     * Camera for this scene
+     */
+    Camera camera;
 
     public MainMode() {
         engine = new Engine();
@@ -25,45 +30,45 @@ public class MainMode implements Screen {
         float[] vertices = {
                 -0.5f, -0.5f, -0.5f,
                 0.5f, -0.5f, -0.5f,
-                0.5f,  0.5f, -0.5f,
-                0.5f,  0.5f, -0.5f,
-                -0.5f,  0.5f, -0.5f,
+                0.5f, 0.5f, -0.5f,
+                0.5f, 0.5f, -0.5f,
+                -0.5f, 0.5f, -0.5f,
                 -0.5f, -0.5f, -0.5f,
 
-                -0.5f, -0.5f,  0.5f,
-                0.5f, -0.5f,  0.5f,
-                0.5f,  0.5f,  0.5f,
-                0.5f,  0.5f,  0.5f,
-                -0.5f,  0.5f,  0.5f,
-                -0.5f, -0.5f,  0.5f,
+                -0.5f, -0.5f, 0.5f,
+                0.5f, -0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                -0.5f, 0.5f, 0.5f,
+                -0.5f, -0.5f, 0.5f,
 
-                -0.5f,  0.5f,  0.5f,
-                -0.5f,  0.5f, -0.5f,
+                -0.5f, 0.5f, 0.5f,
+                -0.5f, 0.5f, -0.5f,
                 -0.5f, -0.5f, -0.5f,
                 -0.5f, -0.5f, -0.5f,
-                -0.5f, -0.5f,  0.5f,
-                -0.5f,  0.5f,  0.5f,
+                -0.5f, -0.5f, 0.5f,
+                -0.5f, 0.5f, 0.5f,
 
-                0.5f,  0.5f,  0.5f,
-                0.5f,  0.5f, -0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, -0.5f,
                 0.5f, -0.5f, -0.5f,
                 0.5f, -0.5f, -0.5f,
-                0.5f, -0.5f,  0.5f,
-                0.5f,  0.5f,  0.5f,
+                0.5f, -0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
 
                 -0.5f, -0.5f, -0.5f,
                 0.5f, -0.5f, -0.5f,
-                0.5f, -0.5f,  0.5f,
-                0.5f, -0.5f,  0.5f,
-                -0.5f, -0.5f,  0.5f,
+                0.5f, -0.5f, 0.5f,
+                0.5f, -0.5f, 0.5f,
+                -0.5f, -0.5f, 0.5f,
                 -0.5f, -0.5f, -0.5f,
 
-                -0.5f,  0.5f, -0.5f,
-                0.5f,  0.5f, -0.5f,
-                0.5f,  0.5f,  0.5f,
-                0.5f,  0.5f,  0.5f,
-                -0.5f,  0.5f,  0.5f,
-                -0.5f,  0.5f, -0.5f,
+                -0.5f, 0.5f, -0.5f,
+                0.5f, 0.5f, -0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                -0.5f, 0.5f, 0.5f,
+                -0.5f, 0.5f, -0.5f,
         };
 
         Mesh cube = new Mesh(new ShaderProgram("cube"));
@@ -82,11 +87,12 @@ public class MainMode implements Screen {
                 )
         );
 
-        Camera camera = new Camera(
+        camera = new Camera(
                 new Vector3(),
                 new Vector3(),
-                0.001f, 100, (float) Math.PI /2, 8 / 6);
-
+                0.001f, 100, (float) Math.PI / 2,
+                (float) GameEngine.input.getScreenWidth() / GameEngine.input.getScreenHeight()
+        );
         engine.createEntity(camera);
 
         // Basic rendering system with camera
@@ -103,7 +109,7 @@ public class MainMode implements Screen {
         });
 
         // Camera control system
-        CameraController controller = new CameraController(camera, 1, 2, 0.003f);
+        CameraController controller = new CameraController(camera, 1, 2, 0.03f);
         engine.addSystem(controller);
     }
 
@@ -119,7 +125,8 @@ public class MainMode implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
+        glViewport(0, 0, width, height);
+        camera.setAsp((float) width / height);
     }
 
     @Override
