@@ -1,7 +1,6 @@
 package util;
 
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 import org.lwjgl.system.MemoryStack;
@@ -77,7 +76,9 @@ public final class Input {
         deltaY = 0;
     }
 
-    /** Update attributes of the class */
+    /**
+     * Update attributes of the class
+     */
     public void update() {
         // Set initial cursor position
         try (MemoryStack stack = stackPush()) {

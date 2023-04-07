@@ -1,6 +1,5 @@
-package game.components;
+package util;
 
-import util.*;
 import util.attributes.ByteAttribute;
 import util.attributes.FloatAttribute;
 import util.attributes.IntAttribute;
@@ -25,6 +24,8 @@ public class Mesh {
 
     public void setGeometry(Geometry geo) {
         this.geo = geo;
+
+        // TODO: This should be done every time the geometry changes (attributes added) or the shader in the material changes
         glBindVertexArray(VAO);
         for (Map.Entry<String, VertexAttribute> entry : geo.attributeMap.entrySet()) {
             // Check if shader attribute and geometry attribute match names
@@ -74,10 +75,8 @@ public class Mesh {
 
         // Bind textures from material
         int i = 0;
-        for (Map.Entry<Material.Texture, Integer> entry : mat.texs.entrySet())
-        {
-            if (mat.shader.uniforms.containsKey(entry.getValue()))
-            {
+        for (Map.Entry<Material.Texture, Integer> entry : mat.texs.entrySet()) {
+            if (mat.shader.uniforms.containsKey(entry.getValue())) {
                 glActiveTexture(GL_TEXTURE0 + i);
                 glBindTexture(GL_TEXTURE_2D, entry.getValue());
                 mat.shader.setInt(entry.getKey().uniformName, i);

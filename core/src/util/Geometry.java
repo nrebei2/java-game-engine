@@ -19,7 +19,7 @@ public class Geometry {
     /**
      * Attaches an attribute to this geometry. There is no protection for assigning the same attribute to multiple geometries.
      *
-     * @param name      Should match uniform name in shader
+     * @param name uniform name in shader
      * @param attribute
      * @return same geometry object for chaining
      */

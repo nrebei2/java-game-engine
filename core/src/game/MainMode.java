@@ -1,16 +1,16 @@
 package game;
 
 import game.components.Camera;
-import game.components.Mesh;
 import game.components.Transform;
-import util.*;
-import util.attributes.FloatAttribute;
+import util.GameEngine;
+import util.Mesh;
+import util.MeshPrimitives;
+import util.Vector3;
 import util.ecs.Engine;
 
-import static org.lwjgl.glfw.GLFW.glfwSetWindowMonitor;
-import static org.lwjgl.opengl.GL11.GL_DONT_CARE;
+import java.util.Random;
+
 import static org.lwjgl.opengl.GL11.glViewport;
-import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class MainMode implements Screen {
     /**
@@ -22,121 +22,25 @@ public class MainMode implements Screen {
      * Camera for this scene
      */
     Camera camera;
+    private final Random gen;
 
     public MainMode() {
         engine = new Engine();
-
-        // 1x1x1 cube
-        float[] vertices = {
-                -0.5f, -0.5f, -0.5f,
-                0.5f, -0.5f, -0.5f,
-                0.5f, 0.5f, -0.5f,
-                0.5f, 0.5f, -0.5f,
-                -0.5f, 0.5f, -0.5f,
-                -0.5f, -0.5f, -0.5f,
-
-                -0.5f, -0.5f, 0.5f,
-                0.5f, -0.5f, 0.5f,
-                0.5f, 0.5f, 0.5f,
-                0.5f, 0.5f, 0.5f,
-                -0.5f, 0.5f, 0.5f,
-                -0.5f, -0.5f, 0.5f,
-
-                -0.5f, 0.5f, 0.5f,
-                -0.5f, 0.5f, -0.5f,
-                -0.5f, -0.5f, -0.5f,
-                -0.5f, -0.5f, -0.5f,
-                -0.5f, -0.5f, 0.5f,
-                -0.5f, 0.5f, 0.5f,
-
-                0.5f, 0.5f, 0.5f,
-                0.5f, 0.5f, -0.5f,
-                0.5f, -0.5f, -0.5f,
-                0.5f, -0.5f, -0.5f,
-                0.5f, -0.5f, 0.5f,
-                0.5f, 0.5f, 0.5f,
-
-                -0.5f, -0.5f, -0.5f,
-                0.5f, -0.5f, -0.5f,
-                0.5f, -0.5f, 0.5f,
-                0.5f, -0.5f, 0.5f,
-                -0.5f, -0.5f, 0.5f,
-                -0.5f, -0.5f, -0.5f,
-
-                -0.5f, 0.5f, -0.5f,
-                0.5f, 0.5f, -0.5f,
-                0.5f, 0.5f, 0.5f,
-                0.5f, 0.5f, 0.5f,
-                -0.5f, 0.5f, 0.5f,
-                -0.5f, 0.5f, -0.5f,
-        };
-
-        float[] uvs = {
-                  0.0f, 0.0f,
-                 1.0f, 0.0f,
-                 1.0f, 1.0f,
-                 1.0f, 1.0f,
-                  0.0f, 1.0f,
-                  0.0f, 0.0f,
-
-                  0.0f, 0.0f,
-                 1.0f, 0.0f,
-                 1.0f, 1.0f,
-                 1.0f, 1.0f,
-                  0.0f, 1.0f,
-                  0.0f, 0.0f,
-
-                  1.0f, 0.0f,
-                  1.0f, 1.0f,
-                  0.0f, 1.0f,
-                  0.0f, 1.0f,
-                  0.0f, 0.0f,
-                  1.0f, 0.0f,
-
-                 1.0f, 0.0f,
-                 1.0f, 1.0f,
-                 0.0f, 1.0f,
-                 0.0f, 1.0f,
-                 0.0f, 0.0f,
-                 1.0f, 0.0f,
-
-                  0.0f, 1.0f,
-                 1.0f, 1.0f,
-                 1.0f, 0.0f,
-                 1.0f, 0.0f,
-                  0.0f, 0.0f,
-                  0.0f, 1.0f,
-
-                  0.0f, 1.0f,
-                 1.0f, 1.0f,
-                 1.0f, 0.0f,
-                 1.0f, 0.0f,
-                  0.0f, 0.0f,
-                  0.0f, 1.0f
-        };
-
-        Mesh cube = new Mesh(
-                new Material("cube",
-                        new Material.Texture("awesomeface.png", "texture")
-                )
-        );
-        Geometry tri = new Geometry()
-                .addAttribute("aPos",
-                        new FloatAttribute(3, vertices, false)
-                )
-                .addAttribute("aTexCoord",
-                        new FloatAttribute(2, uvs, false));
-        cube.setGeometry(tri);
+        this.gen = new Random();
 
         // Entity creation
-        engine.createEntity(
-                cube,
-                new Transform(
-                        new Vector3(3, 0, 0),
-                        new Vector3(),
-                        new Vector3(1, 1, 1)
-                )
-        );
+        for (int i = 0; i < 10; i++) {
+            // Instancing could be used here, but whatever
+            engine.createEntity(
+                    MeshPrimitives.Cube(),
+                    new Transform(
+                            new Vector3(rand(-10f, 10f), rand(-10f, 10f), rand(-10f, 10f)),
+                            new Vector3(),
+                            new Vector3(rand(0.4f, 1.3f), rand(0.4f, 1.3f), rand(0.4f, 1.3f))
+                    )
+            );
+        }
+
 
         camera = new Camera(
                 new Vector3(),
@@ -144,9 +48,8 @@ public class MainMode implements Screen {
                 0.001f, 100, (float) Math.PI / 2,
                 (float) GameEngine.input.getScreenWidth() / GameEngine.input.getScreenHeight()
         );
-        engine.createEntity(camera);
 
-        // Basic rendering system with camera
+        // Basic rendering system with created camera
         engine.addSystem((engine, delta) -> {
             engine.findEntitiesWith(Mesh.class, Transform.class).forEach((result -> {
                 var pair = result.components;
@@ -161,6 +64,10 @@ public class MainMode implements Screen {
         // Camera control system
         CameraController controller = new CameraController(camera, 1, 2, 0.1f);
         engine.addSystem(controller);
+    }
+
+    private float rand(float min, float max) {
+        return min + gen.nextFloat() * (max - min);
     }
 
     @Override
