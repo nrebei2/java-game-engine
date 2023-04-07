@@ -84,6 +84,7 @@ public class Mesh {
             i += 1;
         }
 
+        // Draw
         glBindVertexArray(VAO);
         if (geo.indices != null) {
             glDrawElements(GL_TRIANGLES, geo.indices.length, GL_UNSIGNED_INT, 0);

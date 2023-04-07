@@ -152,6 +152,9 @@ public class Application {
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
 
+        // Wireframe
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
         listener.create();
 
         double lastFrame = glfwGetTime();
