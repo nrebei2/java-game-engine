@@ -13,9 +13,11 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Material {
     /**
-     * List of textures on this material
+     * List of textures on this material.
+     *
+     * TODO: Ideally this should be an IntMap< String>
      */
-    public ArrayList<Texture> texs;
+    public ArrayList<TexInfo> texs;
 
     /**
      * Shader of this material
@@ -43,9 +45,17 @@ public class Material {
         glGenTextures(ids);
         for (int i = 0; i < textures.length; i++) {
             loadTex(ids[i], textures[i]);
-            textures[i].id = ids[i];
-            texs.add(textures[i]);
+            texs.add(new TexInfo(ids[i], textures[i].uniformName));
         }
+    }
+
+    /**
+     * Adds a Framebuffer's color attachment as a texture.
+     * @param buffer FBO holding color attachment
+     * @param uniformName Name of uniform in shader that will hold this texture.
+     */
+    public void addFBOColorTex(FrameBuffer buffer, String uniformName) {
+        texs.add(new TexInfo(buffer.texture, uniformName));
     }
 
     /**
@@ -83,8 +93,26 @@ public class Material {
         return (Math.log(w) / Math.log(2));
     }
 
+    /** Texture class for storage */
+    static class TexInfo {
+        public int id;
+        public String uniformName;
+
+        /**
+         * @param id GL shader id
+         * @param uniformName Name of uniform in shader that will hold this texture.
+         */
+        public TexInfo(int id, String uniformName) {
+            this.id = id;
+            this.uniformName = uniformName;
+        }
+    }
+
+    /**
+     * Texture class for initialization
+     *
+     */
     public static class Texture {
-        public int id = 0;
         public String name;
         public String uniformName;
         public int min = GL_LINEAR_MIPMAP_LINEAR;

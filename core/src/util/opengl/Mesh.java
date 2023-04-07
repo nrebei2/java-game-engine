@@ -93,8 +93,8 @@ public class Mesh {
 
         // Bind textures from material
         int i = 0;
-        for (Material.Texture tex : mat.texs) {
-            if (mat.shader.uniforms.containsKey(tex.name)) {
+        for (Material.TexInfo tex : mat.texs) {
+            if (mat.shader.uniforms.containsKey(tex.uniformName)) {
                 glActiveTexture(GL_TEXTURE0 + i);
                 glBindTexture(GL_TEXTURE_2D, tex.id);
                 mat.shader.setInt(tex.uniformName, i);

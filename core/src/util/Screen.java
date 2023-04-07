@@ -7,19 +7,6 @@ public interface Screen {
     public void show();
 
     /**
-     * Called when the screen should render itself.
-     *
-     * @param delta The time in seconds since the last render.
-     */
-    public void render(float delta);
-
-    public void resize(int width, int height);
-
-    public void pause();
-
-    public void resume();
-
-    /**
      * Called when this screen is no longer the current screen for a {@link Game}.
      */
     public void hide();
@@ -28,4 +15,21 @@ public interface Screen {
      * Called when this screen should release all resources.
      */
     public void dispose();
+
+    /**
+     * See {@link Game#render(float)}
+    */
+    public void render(float delta);
+    /**
+     * See {@link Game#resize(int, int)}
+     */
+    public void resize(int width, int height);
+    /**
+     * See {@link Game#pause()}
+     */
+    public void pause();
+    /**
+     * See {@link Game#resume()}
+     */
+    public void resume();
 }

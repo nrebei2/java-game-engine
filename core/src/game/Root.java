@@ -16,7 +16,7 @@ public class Root extends Game implements ScreenObserver {
     @Override
     public void create() {
         screens[0] = new Awesome();
-        screens[1] = new Awesome();
+        screens[1] = new Blur();
 
         screens[0].setObserver(this);
         screens[1].setObserver(this);

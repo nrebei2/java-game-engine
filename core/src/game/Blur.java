@@ -1,39 +1,27 @@
 package game;
 
-import game.components.Camera;
 import game.components.Transform;
-import util.*;
-import util.ecs.Engine;
-import util.opengl.Material;
+import util.Vector3;
 import util.opengl.Mesh;
 import util.opengl.MeshPrimitives;
 
 import java.util.Random;
 
 /**
- * Screen with 10000 instantiated cubes with a :D texture on it.
+ * Blurred screen using framebuffer
  */
-public class Awesome extends ScreenController {
-    private final Random gen;
-
-    public Awesome() {
-        this.gen = new Random();
-
+public class Blur extends ScreenController {
+    public Blur() {
         // Entity creation
         Mesh cube = MeshPrimitives.Cube();
-        for (int i = 0; i < 10000; i++) {
-            // Instancing could be used here, but this works too
-            engine.createEntity(
-                    cube,
-                    new Transform(
-                            new Vector3(rand(-100f, 100f), rand(-100f, 100f), rand(-100f, 100f)),
-                            new Vector3(),
-                            new Vector3(rand(0.4f, 1.3f), rand(0.4f, 1.3f), rand(0.4f, 1.3f))
-                    )
-            );
-        }
-
-        //cube.getMat().addTextures();
+        engine.createEntity(
+                cube,
+                new Transform(
+                       new Vector3(3, 0, 0),
+                       new Vector3(),
+                       new Vector3(1, 1, 1)
+                )
+        );
 
         // Very basic rendering system with camera
         engine.addSystem((engine, delta) ->
@@ -46,10 +34,6 @@ public class Awesome extends ScreenController {
                     mesh.render();
                 }))
         );
-    }
-
-    private float rand(float min, float max) {
-        return min + gen.nextFloat() * (max - min);
     }
 
     @Override
