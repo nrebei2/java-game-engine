@@ -32,6 +32,14 @@ public class Material {
         this.shader = new ShaderProgram(shaderName);
         this.texs = new HashMap<>();
 
+        addTextures(textures);
+    }
+
+    /**
+     * Add a texture to this material. It is safe to add a texture anytime.
+     * @param textures Textures this material will maintain
+     */
+    public void addTextures(Texture... textures) {
         int[] ids = new int[textures.length];
         glGenTextures(ids);
         for (int i = 0; i < textures.length; i++) {

@@ -66,7 +66,7 @@ public class CameraController implements System {
         camera.getTransform().setPosition(position);
 
         // Rotation
-        if (Math.abs(GameEngine.input.getDeltaY()) >= 100 || Math.abs(GameEngine.input.getDeltaX()) >= 100) return;
+        if (Math.abs(GameEngine.input.getDeltaY()) >= 600 || Math.abs(GameEngine.input.getDeltaX()) >= 600) return;
         float limit = (float) (Math.PI / 2.0);
         angles.y = clamp(angles.y - mouseSensivity * GameEngine.input.getDeltaY() * (float)Math.PI / 180, -limit, limit);
         angles.z -= mouseSensivity * GameEngine.input.getDeltaX() * (float)Math.PI / 180;
