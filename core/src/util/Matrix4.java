@@ -125,7 +125,7 @@ public class Matrix4 {
      * @param rotZ Rotation around z-axis (radians)
      * @return Affine matrix holding rotation information
      */
-    public static Matrix4 rotate_xyz(float rotX, float rotY, float rotZ) {
+    public static float[] rotate_xyz(float rotX, float rotY, float rotZ) {
         float sX = (float) Math.sin(rotX);
         float cX = (float) Math.cos(rotX);
         float sY = (float) Math.sin(rotY);
@@ -134,14 +134,12 @@ public class Matrix4 {
         float cZ = (float) Math.cos(rotZ);
 
         // Column major order
-        return new Matrix4(
-                new float[]{
+        return new float[]{
                         (cY * cZ), (cY * sZ), (-sY), 0,
                         (sX * sY * cZ - cX * sZ), (sX * sY * sZ + cX * cZ), (sX * cY), 0,
                         (cX * sY * cZ + sX * sZ), (cX * sY * sZ - sX * cZ), (cX * cY), 0,
                         0, 0, 0, 1
-                }
-        );
+                };
     }
 
     /**
@@ -289,6 +287,31 @@ public class Matrix4 {
         val[M31] = m13;
         val[M32] = m23;
         return this;
+    }
+
+    /**
+     * Transposes the matrix.
+     * @param val 16 element float array
+     */
+    public static void tra(float[] val) {
+        float m01 = val[M01];
+        float m02 = val[M02];
+        float m03 = val[M03];
+        float m12 = val[M12];
+        float m13 = val[M13];
+        float m23 = val[M23];
+        val[M01] = val[M10];
+        val[M02] = val[M20];
+        val[M03] = val[M30];
+        val[M10] = m01;
+        val[M12] = val[M21];
+        val[M13] = val[M31];
+        val[M20] = m02;
+        val[M21] = m12;
+        val[M23] = val[M32];
+        val[M30] = m03;
+        val[M31] = m13;
+        val[M32] = m23;
     }
 
     /**
@@ -734,5 +757,18 @@ public class Matrix4 {
         val[M31] *= scaleY;
         val[M32] *= scaleZ;
         return this;
+    }
+
+
+
+    /**
+     * @return 16 element float array (columnholding scaling information.
+     */
+    public static float[] scl(float scaleX, float scaleY, float scaleZ) {
+        float[] val = new float[16];
+        val[M00] = scaleX;
+        val[M11] = scaleY;
+        val[M22] = scaleZ;
+        return val;
     }
 }
