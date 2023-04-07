@@ -22,7 +22,10 @@ public class CameraController implements System {
     private float mouseSensivity;
 
     /**
-     * @param camera this class will control
+     * @param camera           this class will control
+     * @param movementSpeed    units/second
+     * @param shiftScale       speed scale increase when holding shift
+     * @param mouseSensitivity degrees/pixel
      */
     public CameraController(Camera camera, float movementSpeed, float shiftScale, float mouseSensitivity) {
         this.camera = camera;

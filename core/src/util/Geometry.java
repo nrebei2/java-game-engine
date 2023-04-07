@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 /**
  * Container of (named) vertex attributes.
- * Note when attached to a mesh with a shader the names must match names of the shader attributes.
+ * Note when attached to a mesh, the mesh will try to match the names of the attributes with the material's shader attributes.
  */
 public class Geometry {
     /**
@@ -19,7 +19,7 @@ public class Geometry {
     /**
      * Attaches an attribute to this geometry. There is no protection for assigning the same attribute to multiple geometries.
      *
-     * @param name uniform name in shader
+     * @param name      uniform name in shader
      * @param attribute
      * @return same geometry object for chaining
      */
@@ -55,8 +55,6 @@ public class Geometry {
      * @return count of distinct vertices in an attribute
      */
     public int count() {
-        // any attribute will do
-        VertexAttribute attr = attributeMap.values().iterator().next();
-        return attr.count;
+        return count;
     }
 }

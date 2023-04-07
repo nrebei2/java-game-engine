@@ -5,6 +5,7 @@ import util.attributes.FloatAttribute;
 import util.attributes.IntAttribute;
 
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL43.*;
@@ -14,7 +15,15 @@ import static org.lwjgl.opengl.GL43.*;
  */
 public class Mesh {
     private int VAO;
+
+    /**
+     * Geometry currently assigned to this object
+     */
     private Geometry geo;
+
+    /**
+     * Material currently assigned to this object
+     */
     private Material mat;
 
     public Mesh(Material material) {
@@ -41,6 +50,7 @@ public class Mesh {
             switch (attribute.type) {
                 case GL_FLOAT -> {
                     FloatAttribute attr = (FloatAttribute) attribute;
+                    System.out.println(FloatBuffer.wrap(attr.data).get(2));
                     glBufferData(GL_ARRAY_BUFFER, attr.data, attribute.dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
                 }
                 case GL_UNSIGNED_INT -> {
@@ -49,6 +59,7 @@ public class Mesh {
                 }
                 case GL_UNSIGNED_BYTE -> {
                     ByteAttribute attr = (ByteAttribute) attribute;
+                    // TODO: lwjgl supports only direct buffers so wrap will not work :(
                     glBufferData(GL_ARRAY_BUFFER, ByteBuffer.wrap(attr.data), attribute.dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
                 }
             }
@@ -65,6 +76,14 @@ public class Mesh {
         glBindVertexArray(0);
     }
 
+    public Geometry getGeo() {
+        return geo;
+    }
+
+    public Material getMat() {
+        return mat;
+    }
+
     /**
      * Binds the shader on this mesh, then renders the mesh onto the screen.
      */
@@ -75,11 +94,11 @@ public class Mesh {
 
         // Bind textures from material
         int i = 0;
-        for (Map.Entry<Material.Texture, Integer> entry : mat.texs.entrySet()) {
-            if (mat.shader.uniforms.containsKey(entry.getValue())) {
+        for (Material.Texture tex : mat.texs) {
+            if (mat.shader.uniforms.containsKey(tex.name)) {
                 glActiveTexture(GL_TEXTURE0 + i);
-                glBindTexture(GL_TEXTURE_2D, entry.getValue());
-                mat.shader.setInt(entry.getKey().uniformName, i);
+                glBindTexture(GL_TEXTURE_2D, tex.id);
+                mat.shader.setInt(tex.uniformName, i);
             }
             i += 1;
         }

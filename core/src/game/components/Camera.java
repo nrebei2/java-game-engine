@@ -64,8 +64,7 @@ public class Camera {
         // view = (R^-1)(T^-1) = (R^T)(T^-1)
         Vector3 rot = transform.getRotation();
         Vector3 tr = transform.getPosition();
-        float[] rotMat = Matrix4.rotate_xyz(rot.x, rot.y, rot.z);
-        viewCache.set(rotMat);
+        viewCache.set(Matrix4.rotate_xyz(rot.x, rot.y, rot.z));
         viewCache.tra();
         viewCache.translate(-tr.x, -tr.y, -tr.z);
 

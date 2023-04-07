@@ -18,7 +18,7 @@ public final class Entity extends Identifiable {
     private boolean enabled;
 
     public Entity() {
-        components = new HashMap<>();
+        components = new HashMap<>(5, 1);
         enabled = false;
     }
 

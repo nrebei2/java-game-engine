@@ -26,7 +26,7 @@ public class Engine {
     List<System> systems;
 
     public Engine() {
-        entities = new UnorderedList<>();
+        entities = new UnorderedList<>(1000);
         systems = new ArrayList<>();
         resultCache = new Result<>();
         w2Cache = new With2<>();

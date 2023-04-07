@@ -4,8 +4,7 @@ import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL43.*;
 import static org.lwjgl.stb.STBImage.stbi_image_free;
@@ -14,9 +13,9 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Material {
     /**
-     * Map of textures to their OpenGL id
+     * List of textures on this material
      */
-    public Map<Texture, Integer> texs;
+    public ArrayList<Texture> texs;
 
     /**
      * Shader of this material
@@ -29,7 +28,7 @@ public class Material {
      */
     public Material(String shaderName, Texture... textures) {
         this.shader = ShaderManager.getProgram(shaderName);
-        this.texs = new HashMap<>();
+        this.texs = new ArrayList<>();
 
         addTextures(textures);
     }
@@ -44,7 +43,8 @@ public class Material {
         glGenTextures(ids);
         for (int i = 0; i < textures.length; i++) {
             loadTex(ids[i], textures[i]);
-            texs.put(textures[i], ids[i]);
+            textures[i].id = ids[i];
+            texs.add(textures[i]);
         }
     }
 
@@ -84,6 +84,7 @@ public class Material {
     }
 
     public static class Texture {
+        public int id = 0;
         public String name;
         public String uniformName;
         public int min = GL_LINEAR_MIPMAP_LINEAR;
