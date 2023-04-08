@@ -37,9 +37,11 @@ public class Root extends Game implements ScreenObserver {
     public void exitScreen(Screen screen, int exitCode) {
         if (exitCode == ScreenController.CODE_NEXT) {
             curScreen = (curScreen + 1) % screens.length;
+            screens[curScreen].nextPrevious = true;
             setScreen(screens[curScreen]);
         } else if (exitCode == ScreenController.CODE_BACK) {
             curScreen = (curScreen + screens.length - 1) % screens.length;
+            screens[curScreen].prevPrevious = true;
             setScreen(screens[curScreen]);
         }
     }

@@ -59,11 +59,20 @@ public class Material {
     public void addFBOColorTex(FrameBuffer buffer, String uniformName) {
         texs.add(new TexInfo(buffer.texture, uniformName));
     }
-    
+
+
+    /**
+     * @param uniformName Texture to remove
+     */
     public void removeTexture(String uniformName) {
         var iter = texs.iterator();
         while (iter.hasNext()) {
-
+            TexInfo i = iter.next();
+            if (i.uniformName.equals(uniformName)) {
+                iter.remove();
+                System.out.println("KASHDKAHSKDAHDSAHDKHDSHKDA");
+                break;
+            }
         }
     }
 

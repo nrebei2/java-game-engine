@@ -17,6 +17,10 @@ import static org.lwjgl.opengl.GL43.*;
  */
 public class Blur extends ScreenController {
 
+    /** Screen-space quad */
+    private Mesh quad;
+    private FrameBuffer buffer;
+
     public Blur() {
 
         Mesh cube = MeshPrimitives.Cube();
@@ -30,9 +34,7 @@ public class Blur extends ScreenController {
                 )
         );
 
-        FrameBuffer buffer = new FrameBuffer();
-        Mesh quad = MeshPrimitives.ScreenQuad();
-        quad.getMat().addFBOColorTex(buffer, "color");
+        this.quad = MeshPrimitives.ScreenQuad();
 
         // Multi-pass render system
         engine.addSystem((engine, delta) -> {
@@ -51,6 +53,27 @@ public class Blur extends ScreenController {
             // Next pass
             quad.render();
         });
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        createFrameBuffer();
+    }
+
+    /**
+     * Creates and assigns
+     */
+    private void createFrameBuffer() {
+        buffer = new FrameBuffer();
+        quad.getMat().removeTexture("color");
+        quad.getMat().addFBOColorTex(buffer, "color");
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
+        createFrameBuffer();
     }
 
     @Override

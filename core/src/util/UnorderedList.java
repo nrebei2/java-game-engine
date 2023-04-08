@@ -3,6 +3,8 @@ package util;
 import util.ecs.Identifiable;
 
 import java.util.*;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * ArrayList with no guarantees on order. This allows remove to be O(1).
@@ -81,11 +83,14 @@ public class UnorderedList<T extends Identifiable> extends AbstractList<T> imple
     public T remove(int index) {
         Object[] es = this.elements;
         T tmp = get(index);
-        if (index != size()) {
+        if (index == size() - 1) {
+            // index at the end
+            es[index] = null;
+        } else {
             // We swap with the end
-            es[index] = es[size()];
+            es[index] = es[size()-1];
+            es[size() - 1] = null;
         }
-        es[index] = null;
         size--;
         return tmp;
     }
@@ -125,6 +130,17 @@ public class UnorderedList<T extends Identifiable> extends AbstractList<T> imple
         elements = Arrays.copyOf(elements, newCapacity);
     }
 
+    @Override
+    public Stream<T> stream() {
+        Stream<T> stream = StreamSupport.stream(
+                Spliterators.spliteratorUnknownSize(
+                        iterator(),
+                        Spliterator.ORDERED)
+                , false);
+
+        return super.stream();
+    }
+
     /**
      * Note this returns a reference of a pre-allocated instance. Therefore, do not nest iterators!
      */
@@ -161,7 +177,7 @@ public class UnorderedList<T extends Identifiable> extends AbstractList<T> imple
 
         @Override
         public void remove() {
-            UnorderedList.this.remove(curIndex);
+            UnorderedList.this.remove(curIndex-1);
         }
 
         void reset() {

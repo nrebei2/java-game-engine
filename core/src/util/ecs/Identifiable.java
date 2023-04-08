@@ -4,13 +4,13 @@ public abstract class Identifiable {
     /**
      * integer identifier assigned to this object
      */
-    int id;
+    int identifier;
 
     public void setId(int id) {
-        this.id = id;
+        this.identifier = id;
     }
 
     public int getId() {
-        return id;
+        return identifier;
     }
 }

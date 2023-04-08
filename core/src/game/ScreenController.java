@@ -20,7 +20,7 @@ public abstract class ScreenController extends ScreenObservable implements Scree
     public final static int CODE_BACK = 1;
 
     /** Used to force the exitScreen call only once when holding down key */
-    private boolean nextPrevious, prevPrevious = true;
+    public boolean nextPrevious, prevPrevious = true;
 
     /**
      * ECS engine
@@ -71,6 +71,8 @@ public abstract class ScreenController extends ScreenObservable implements Scree
         // Reset camera transform
         camera.getTransform().setRotation(new Vector3());
         camera.getTransform().setPosition(new Vector3());
+        // Screen dimensions may have changed
+        resize(GameEngine.input.getScreenWidth(), GameEngine.input.getScreenHeight());
     }
 
     @Override
