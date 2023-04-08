@@ -1,23 +1,19 @@
 package game;
 
 import game.components.Transform;
+import util.Matrix4;
 import util.Vector3;
-import util.opengl.FrameBuffer;
 import util.opengl.Mesh;
 import util.opengl.MeshPrimitives;
+import util.opengl.Skybox;
+
+import static org.lwjgl.opengl.GL43.*;
 
 /**
- * Blurred screen using framebuffer
+ * Ocean map using skybox
  */
-public class Blur extends ScreenController {
-
-    /**
-     * Screen-space quad
-     */
-    private Mesh quad;
-    private FrameBuffer buffer;
-
-    public Blur() {
+public class Ocean extends ScreenController {
+    public Ocean() {
 
         Mesh cube = MeshPrimitives.Cube();
         engine.createEntity(
@@ -29,12 +25,10 @@ public class Blur extends ScreenController {
                 )
         );
 
-        this.quad = MeshPrimitives.ScreenQuad();
+        Skybox skybox = new Skybox("ocean", "jpg");
 
-        // Multi-pass render system
+        // Same simple render system
         engine.addSystem((engine, delta) -> {
-            // First pass
-            buffer.bind();
             engine.findEntitiesWith(Mesh.class, Transform.class).forEach((result -> {
                 var pair = result.components;
                 Mesh mesh = pair.comp1;
@@ -43,32 +37,17 @@ public class Blur extends ScreenController {
                 mesh.setModelMatrix(transform.getModel());
                 mesh.render();
             }));
-            buffer.unbind();
 
-            // Next pass
-            quad.render();
+            glDepthFunc(GL_LEQUAL); // Since cubemap depth values are at 1
+            // Needed rotations to work well with OpenGL sampled direction
+            Matrix4 proj = camera.getViewProj();
+            proj.rotate((float) - Math.PI / 2, 0, 0);
+            proj.rotate(0, (float) - Math.PI / 2,  0);
+            proj.removeTranslation(); // Keep cube centered on camera
+            skybox.getCubeMap().setCombinedMatrix(proj);
+            skybox.getCubeMap().render();
+            glDepthFunc(GL_LESS);
         });
-    }
-
-    @Override
-    public void show() {
-        super.show();
-        createFrameBuffer();
-    }
-
-    /**
-     * Creates and assigns
-     */
-    private void createFrameBuffer() {
-        buffer = new FrameBuffer();
-        quad.getMat().removeTexture("color");
-        quad.getMat().addFBOColorTex(buffer, "color");
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        super.resize(width, height);
-        createFrameBuffer();
     }
 
     @Override

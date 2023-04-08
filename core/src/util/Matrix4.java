@@ -125,7 +125,7 @@ public class Matrix4 {
      * @param rotX Rotation around x-axis (radians)
      * @param rotY Rotation around y-axis (radians)
      * @param rotZ Rotation around z-axis (radians)
-     * @return 16 element (column order) float array. Note it is a static reference, therefore DON'T mutate it.
+     * @return 16 element (column order) float array. Note it is a static reference.
      */
     public static float[] rotate_xyz(float rotX, float rotY, float rotZ) {
         float sX = (float) Math.sin(rotX);
@@ -557,6 +557,17 @@ public class Matrix4 {
         val[M03] = x;
         val[M13] = y;
         val[M23] = z;
+        return this;
+    }
+
+    /**
+     * Removes the translation component from this matrix.
+     *
+     * @return This matrix for the purpose of chaining methods together.
+     */
+    public Matrix4 removeTranslation() {
+        setTranslation(0, 0, 0);
+        val[M33] = 0;
         return this;
     }
 

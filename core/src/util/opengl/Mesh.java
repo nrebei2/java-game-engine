@@ -35,6 +35,9 @@ public class Mesh {
         this.geo = geo;
 
         // TODO: This should be done every time the geometry changes (attributes added) or the shader in the material changes
+        // TODO: Try-hard optimizations:
+        //  - If the geometry is static it would probably be best to batch all the attributes in one VBO
+        //  - Could buffer entire meshes with the same vertex format to reduce AttribPointer calls
         glBindVertexArray(VAO);
         for (Map.Entry<String, VertexAttribute> entry : geo.attributeMap.entrySet()) {
             // Check if shader attribute and geometry attribute match names

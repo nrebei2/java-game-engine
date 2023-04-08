@@ -19,7 +19,9 @@ public class UnorderedList<T extends Identifiable> extends AbstractList<T> imple
     Object[] elements;
     private int size;
 
-    /** Iterator cache */
+    /**
+     * Iterator cache
+     */
     private Itr itr = new Itr();
 
     public UnorderedList() {
@@ -88,7 +90,7 @@ public class UnorderedList<T extends Identifiable> extends AbstractList<T> imple
             es[index] = null;
         } else {
             // We swap with the end
-            es[index] = es[size()-1];
+            es[index] = es[size() - 1];
             es[size() - 1] = null;
         }
         size--;
@@ -177,7 +179,7 @@ public class UnorderedList<T extends Identifiable> extends AbstractList<T> imple
 
         @Override
         public void remove() {
-            UnorderedList.this.remove(curIndex-1);
+            UnorderedList.this.remove(curIndex - 1);
         }
 
         void reset() {

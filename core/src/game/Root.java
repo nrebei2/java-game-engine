@@ -1,7 +1,6 @@
 package game;
 
 import util.Game;
-import util.GameEngine;
 import util.Screen;
 import util.ScreenObserver;
 
@@ -10,16 +9,18 @@ import util.ScreenObserver;
  */
 public class Root extends Game implements ScreenObserver {
 
-    ScreenController[] screens = new ScreenController[2];
+    ScreenController[] screens = new ScreenController[3];
     int curScreen;
 
     @Override
     public void create() {
         screens[0] = new Awesome();
         screens[1] = new Blur();
+        screens[2] = new Ocean();
 
         screens[0].setObserver(this);
         screens[1].setObserver(this);
+        screens[2].setObserver(this);
 
         curScreen = 0;
         setScreen(screens[curScreen]);

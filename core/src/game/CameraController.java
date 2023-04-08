@@ -22,6 +22,11 @@ public class CameraController implements System {
     private float mouseSensivity;
 
     /**
+     * Cache
+     */
+    private float[] forward, right;
+
+    /**
      * @param camera           this class will control
      * @param movementSpeed    units/second
      * @param shiftScale       speed scale increase when holding shift
@@ -32,6 +37,8 @@ public class CameraController implements System {
         this.movementSpeed = movementSpeed;
         this.shiftScale = shiftScale;
         this.mouseSensivity = mouseSensitivity;
+        forward = new float[3];
+        right = new float[3];
     }
 
     /**
@@ -46,11 +53,15 @@ public class CameraController implements System {
         float[] rotMat = Matrix4.rotate_xyz(angles.x, angles.y, angles.z);
 
         // Forward vector
-        float[] forward = {1, 0, 0};
+        forward[0] = 1;
+        forward[1] = 0;
+        forward[2] = 0;
         Matrix4.mulVec(rotMat, forward);
 
         // Right vector
-        float[] right = {0, -1, 0};
+        right[0] = 0;
+        right[1] = -1;
+        right[2] = 0;
         Matrix4.mulVec(rotMat, right);
 
         Vector3 position = camera.getTransform().getPosition();
@@ -74,6 +85,9 @@ public class CameraController implements System {
         angles.y = clamp(angles.y - mouseSensivity * GameEngine.input.getDeltaY() * (float) Math.PI / 180, -limit, limit);
         angles.z -= mouseSensivity * GameEngine.input.getDeltaX() * (float) Math.PI / 180;
         camera.getTransform().setRotation(angles);
+
+        // Zoom-in
+        camera.setFovy(clamp(camera.getFovy() - (GameEngine.input.getScrollY() * (float) Math.PI / 100), 0, (float) Math.PI));
     }
 
     private float clamp(float val, float min, float max) {

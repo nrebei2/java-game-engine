@@ -1,6 +1,5 @@
 package util;
 
-import org.lwjgl.BufferUtils;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
@@ -159,7 +158,6 @@ public class Application {
 
         double lastFrame = glfwGetTime();
         while (!glfwWindowShouldClose(window)) {
-            GameEngine.input.update();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
             double curFrame = glfwGetTime();
@@ -167,11 +165,12 @@ public class Application {
             listener.render((float) (curFrame - lastFrame));
             lastFrame = curFrame;
 
-            // Since v-sync is on this call stalls
-            glfwSwapBuffers(window); // swap the color buffers
+            GameEngine.input.update();
 
-            // Poll for window events. The key callback above will only be
-            // invoked during this call.
+            // Since v-sync is on this call stalls
+            glfwSwapBuffers(window);
+
+            // Poll for window events
             glfwPollEvents();
         }
     }

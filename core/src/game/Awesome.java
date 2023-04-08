@@ -1,10 +1,7 @@
 package game;
 
-import game.components.Camera;
 import game.components.Transform;
-import util.*;
-import util.ecs.Engine;
-import util.opengl.Material;
+import util.Vector3;
 import util.opengl.Mesh;
 import util.opengl.MeshPrimitives;
 
@@ -34,15 +31,16 @@ public class Awesome extends ScreenController {
         }
 
         // Very basic rendering system with camera
-        engine.addSystem((engine, delta) ->
-                engine.findEntitiesWith(Mesh.class, Transform.class).forEach((result -> {
-                    var pair = result.components;
-                    Mesh mesh = pair.comp1;
-                    Transform transform = pair.comp2;
-                    mesh.setCombinedMatrix(camera.getViewProj());
-                    mesh.setModelMatrix(transform.getModel());
-                    mesh.render();
-                }))
+        engine.addSystem((engine, delta) -> {
+                    engine.findEntitiesWith(Mesh.class, Transform.class).forEach((result -> {
+                        var pair = result.components;
+                        Mesh mesh = pair.comp1;
+                        Transform transform = pair.comp2;
+                        mesh.setCombinedMatrix(camera.getViewProj());
+                        mesh.setModelMatrix(transform.getModel());
+                        mesh.render();
+                    }));
+                }
         );
     }
 

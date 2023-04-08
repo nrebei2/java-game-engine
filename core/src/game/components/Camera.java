@@ -85,4 +85,8 @@ public class Camera {
         this.asp = asp;
         proj = Matrix4.projection(near, far, fovy, asp);
     }
+
+    public float getFovy() {
+        return fovy;
+    }
 }

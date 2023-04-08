@@ -18,16 +18,19 @@ public interface Screen {
 
     /**
      * See {@link Game#render(float)}
-    */
+     */
     public void render(float delta);
+
     /**
      * See {@link Game#resize(int, int)}
      */
     public void resize(int width, int height);
+
     /**
      * See {@link Game#pause()}
      */
     public void pause();
+
     /**
      * See {@link Game#resume()}
      */

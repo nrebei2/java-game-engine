@@ -116,22 +116,22 @@ public class MeshPrimitives {
      */
     public static Mesh ScreenQuad() {
         float[] quadPos = {
-                -1.0f,  1.0f,
+                -1.0f, 1.0f,
                 -1.0f, -1.0f,
                 1.0f, -1.0f,
-                -1.0f,  1.0f,
+                -1.0f, 1.0f,
                 1.0f, -1.0f,
-                1.0f,  1.0f,
+                1.0f, 1.0f,
         };
 
         float[] quadUv = {
                 0.0f, 1.0f,
                 0.0f, 0.0f,
-               1.0f, 0.0f,
+                1.0f, 0.0f,
 
                 0.0f, 1.0f,
-               1.0f, 0.0f,
-               1.0f, 1.0f
+                1.0f, 0.0f,
+                1.0f, 1.0f
         };
 
         Mesh quad = new Mesh(

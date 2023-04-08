@@ -19,7 +19,9 @@ public abstract class ScreenController extends ScreenObservable implements Scree
     public final static int CODE_NEXT = 0;
     public final static int CODE_BACK = 1;
 
-    /** Used to force the exitScreen call only once when holding down key */
+    /**
+     * Used to force the exitScreen call only once when holding down key
+     */
     public boolean nextPrevious, prevPrevious = true;
 
     /**

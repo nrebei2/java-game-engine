@@ -6,7 +6,6 @@ import util.ecs.Identifiable;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL43.*;
 import static org.lwjgl.stb.STBImage.stbi_image_free;
@@ -16,7 +15,7 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 public class Material {
     /**
      * List of textures on this material.
-     *
+     * <p>
      * TODO: Ideally this should be an IntMap< String>
      */
     public UnorderedList<TexInfo> texs;
@@ -53,11 +52,22 @@ public class Material {
 
     /**
      * Adds a Framebuffer's color attachment as a texture.
-     * @param buffer FBO holding color attachment
+     *
+     * @param buffer      FBO holding color attachment
      * @param uniformName Name of uniform in shader that will hold this texture.
      */
     public void addFBOColorTex(FrameBuffer buffer, String uniformName) {
         texs.add(new TexInfo(buffer.texture, uniformName));
+    }
+
+    /**
+     * Adds a Skybox's cube map as a texture.
+     *
+     * @param map         Skybox holding cubemap texture
+     * @param uniformName Name of uniform in shader that will hold this texture.
+     */
+    public void addSkyboxTex(Skybox map, String uniformName) {
+        texs.add(new TexInfo(map.texture, uniformName));
     }
 
 
@@ -70,7 +80,6 @@ public class Material {
             TexInfo i = iter.next();
             if (i.uniformName.equals(uniformName)) {
                 iter.remove();
-                System.out.println("KASHDKAHSKDAHDSAHDKHDSHKDA");
                 break;
             }
         }
@@ -111,13 +120,15 @@ public class Material {
         return (Math.log(w) / Math.log(2));
     }
 
-    /** Texture class for storage */
+    /**
+     * Texture class for storage
+     */
     static class TexInfo extends Identifiable {
         public int id;
         public String uniformName;
 
         /**
-         * @param id GL shader id
+         * @param id          GL shader id
          * @param uniformName Name of uniform in shader that will hold this texture.
          */
         public TexInfo(int id, String uniformName) {
@@ -128,7 +139,6 @@ public class Material {
 
     /**
      * Texture class for initialization
-     *
      */
     public static class Texture {
         public String name;

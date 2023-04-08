@@ -6,7 +6,6 @@ import org.lwjgl.glfw.GLFWScrollCallback;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.DoubleBuffer;
-import java.nio.IntBuffer;
 import java.util.BitSet;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -33,6 +32,8 @@ public final class Input {
     private float deltaX, deltaY = 0;
     private int[] dimensions;
 
+    private float scrollX, scrollY = 0;
+
     private int count = 0;
 
     public Input() {
@@ -52,7 +53,9 @@ public final class Input {
     private GLFWScrollCallback scrollCallback = new GLFWScrollCallback() {
         @Override
         public void invoke(long window, double xoffset, double yoffset) {
-            // TODO if needed
+            if (window != handle) return;
+            scrollX = (float) xoffset;
+            scrollY = (float) yoffset;
         }
     };
 
@@ -72,7 +75,9 @@ public final class Input {
      * Update attributes of the class
      */
     public void update() {
-        // Set initial cursor position
+        // Reset scroll delta
+        scrollX = scrollY = 0;
+        // Update mouse position and delta
         try (MemoryStack stack = stackPush()) {
             DoubleBuffer x = stack.mallocDouble(1); // int*
             DoubleBuffer y = stack.mallocDouble(1); // int*
@@ -118,6 +123,14 @@ public final class Input {
 
     public float getMouseY() {
         return mouseY;
+    }
+
+    public float getScrollX() {
+        return scrollX;
+    }
+
+    public float getScrollY() {
+        return scrollY;
     }
 
     public boolean isButtonPressed(int button) {
