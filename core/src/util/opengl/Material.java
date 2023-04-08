@@ -25,7 +25,7 @@ public class Material {
     public ShaderProgram shader;
 
     /**
-     * @param shaderName See {@link ShaderProgram}
+     * @param shaderName For {@link ShaderProgram#ShaderProgram(String)}
      * @param textures   Textures this material will maintain
      */
     public Material(String shaderName, Texture... textures) {

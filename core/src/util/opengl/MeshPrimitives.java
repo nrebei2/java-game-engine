@@ -4,10 +4,10 @@ import util.opengl.attributes.FloatAttribute;
 
 public class MeshPrimitives {
     /**
-     * @return 1x1x1 cube centered at (0, 0, 0) with supplied uvs.
+     * @return 1x1x1 cube centered at (0, 0, 0) with supplied uvs. Used shader is cube.
      */
     public static Mesh Cube() {
-        float[] vertices = {
+        float[] cubePos = {
                 // Back face
                 -0.5f, -0.5f, -0.5f,
                 0.5f, 0.5f, -0.5f,
@@ -52,7 +52,7 @@ public class MeshPrimitives {
                 -0.5f, 0.5f, 0.5f,
         };
 
-        float[] uvs = {
+        float[] cubeUvs = {
                 0.0f, 0.0f, // Bottom-left
                 1.0f, 1.0f, // top-right
                 1.0f, 0.0f, // bottom-right
@@ -98,16 +98,52 @@ public class MeshPrimitives {
 
         Mesh cube = new Mesh(
                 new Material("cube",
-                        new Material.Texture("awesomeface.png", "texture")
+                        new Material.Texture("awesomeface.png", "texture1")
                 )
         );
         Geometry tri = new Geometry()
                 .addAttribute("aPos",
-                        new FloatAttribute(3, vertices, false)
+                        new FloatAttribute(3, cubePos, false)
                 )
                 .addAttribute("aTexCoord",
-                        new FloatAttribute(2, uvs, false));
+                        new FloatAttribute(2, cubeUvs, false));
         cube.setGeometry(tri);
         return cube;
+    }
+
+    /**
+     * @return quad that fills the entire screen in NDC w/ uvs. Used shader is screenspace.
+     */
+    public static Mesh ScreenQuad() {
+        float[] quadPos = {
+                -1.0f,  1.0f,
+                -1.0f, -1.0f,
+                1.0f, -1.0f,
+                -1.0f,  1.0f,
+                1.0f, -1.0f,
+                1.0f,  1.0f,
+        };
+
+        float[] quadUv = {
+                0.0f, 1.0f,
+                0.0f, 0.0f,
+               1.0f, 0.0f,
+
+                0.0f, 1.0f,
+               1.0f, 0.0f,
+               1.0f, 1.0f
+        };
+
+        Mesh quad = new Mesh(
+                new Material("screenspace")
+        );
+        Geometry geo = new Geometry()
+                .addAttribute("aPos",
+                        new FloatAttribute(2, quadPos, false)
+                )
+                .addAttribute("aTexCoord",
+                        new FloatAttribute(2, quadUv, false));
+        quad.setGeometry(geo);
+        return quad;
     }
 }

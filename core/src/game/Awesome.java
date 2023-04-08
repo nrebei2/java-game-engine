@@ -33,8 +33,6 @@ public class Awesome extends ScreenController {
             );
         }
 
-        //cube.getMat().addTextures();
-
         // Very basic rendering system with camera
         engine.addSystem((engine, delta) ->
                 engine.findEntitiesWith(Mesh.class, Transform.class).forEach((result -> {
