@@ -12,16 +12,15 @@ import static org.lwjgl.opengl.GL11.glViewport;
 
 /**
  * Simple scene with a controllable camera.
- * Also allows the game to cycle between screens
+ * Also allows the game to cycle between screens.
  */
 public abstract class ScreenController extends ScreenObservable implements Screen {
 
     public final static int CODE_NEXT = 0;
     public final static int CODE_BACK = 1;
 
-    /** Used to force the exitScreen call only once when pressing key */
-    private boolean nextPrevious = true;
-    private boolean prevPrevious = true;
+    /** Used to force the exitScreen call only once when holding down key */
+    private boolean nextPrevious, prevPrevious = true;
 
     /**
      * ECS engine
@@ -50,6 +49,8 @@ public abstract class ScreenController extends ScreenObservable implements Scree
 
     @Override
     public void render(float delta) {
+        engine.run(delta);
+
         // Switch screens on arrow key press
         boolean rightPressed = GameEngine.input.isKeyPressed(GLFW.GLFW_KEY_RIGHT);
         if (rightPressed && !nextPrevious) {
@@ -63,7 +64,6 @@ public abstract class ScreenController extends ScreenObservable implements Scree
         }
         prevPrevious = leftPressed;
 
-        engine.run(delta);
     }
 
     @Override

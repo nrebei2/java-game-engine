@@ -1,5 +1,7 @@
 package util.ecs;
 
+import util.UnorderedList;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -26,7 +28,7 @@ public class Engine {
     List<System> systems;
 
     public Engine() {
-        entities = new UnorderedList<>(1000);
+        entities = new UnorderedList<>(10);
         systems = new ArrayList<>();
         resultCache = new Result<>();
         w2Cache = new With2<>();

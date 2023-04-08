@@ -16,15 +16,17 @@ import static org.lwjgl.opengl.GL43.*;
  * Blurred screen using framebuffer
  */
 public class Blur extends ScreenController {
+
     public Blur() {
-        // Entity creation
+
         Mesh cube = MeshPrimitives.Cube();
+        // Instancing could be used here, but this works too
         engine.createEntity(
                 cube,
                 new Transform(
-                       new Vector3(3, -1, 0),
-                       new Vector3(),
-                       new Vector3(1, 1, 1)
+                        new Vector3(3, 0, 0),
+                        new Vector3(),
+                        new Vector3(1, 1, 1)
                 )
         );
 
@@ -32,16 +34,14 @@ public class Blur extends ScreenController {
         Mesh quad = MeshPrimitives.ScreenQuad();
         quad.getMat().addFBOColorTex(buffer, "color");
 
-        // Render system
+        // Multi-pass render system
         engine.addSystem((engine, delta) -> {
             // First pass
             buffer.bind();
             engine.findEntitiesWith(Mesh.class, Transform.class).forEach((result -> {
-                if (GameEngine.input.isKeyPressed(GLFW.GLFW_KEY_ENTER)) return;
                 var pair = result.components;
                 Mesh mesh = pair.comp1;
                 Transform transform = pair.comp2;
-                transform.setScale(transform.getScale().scl(1.001f));
                 mesh.setCombinedMatrix(camera.getViewProj());
                 mesh.setModelMatrix(transform.getModel());
                 mesh.render();
@@ -49,10 +49,7 @@ public class Blur extends ScreenController {
             buffer.unbind();
 
             // Next pass
-            glDisable(GL_DEPTH_TEST);
-            //cube.render();
             quad.render();
-            glEnable(GL_DEPTH_TEST);
         });
     }
 

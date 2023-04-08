@@ -89,23 +89,19 @@ public class ShaderProgram {
     }
 
     public void setBool(String name, boolean value) {
-        if (glIsProgram(ID)) glUniform1i(uniforms.get(name), value ? 1 : 0);
-        else glProgramUniform1f(ID, uniforms.get(name), value ? 1 : 0);
+        glProgramUniform1f(ID, uniforms.get(name), value ? 1 : 0);
     }
 
     public void setInt(String name, int value) {
-        if (glIsProgram(ID)) glUniform1i(uniforms.get(name), value);
-        else glProgramUniform1i(ID, uniforms.get(name), value);
+        glProgramUniform1i(ID, uniforms.get(name), value);
     }
 
     public void setFloat(String name, float value) {
-        if (glIsProgram(ID)) glUniform1f(uniforms.get(name), value);
-        else glProgramUniform1f(ID, uniforms.get(name), value);
+        glProgramUniform1f(ID, uniforms.get(name), value);
     }
 
     public void setMat4(String name, Matrix4 mat) {
-        if (glIsProgram(ID)) glUniformMatrix4fv(uniforms.get(name), false, mat.val);
-        else glUniformMatrix4fv(uniforms.get(name), false, mat.val);
+        glProgramUniformMatrix4fv(ID, uniforms.get(name), false, mat.val);
     }
 
     /**

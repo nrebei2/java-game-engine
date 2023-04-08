@@ -1,9 +1,8 @@
-package util.ecs;
+package util;
 
-import java.util.AbstractList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.RandomAccess;
+import util.ecs.Identifiable;
+
+import java.util.*;
 
 /**
  * ArrayList with no guarantees on order. This allows remove to be O(1).
@@ -15,8 +14,11 @@ public class UnorderedList<T extends Identifiable> extends AbstractList<T> imple
     /**
      * capacity = entities.length
      */
-    private Object[] elements;
+    Object[] elements;
     private int size;
+
+    /** Iterator cache */
+    private Itr itr = new Itr();
 
     public UnorderedList() {
         this(10);
@@ -70,7 +72,7 @@ public class UnorderedList<T extends Identifiable> extends AbstractList<T> imple
         if (size() == elements.length) {
             resize();
         }
-        // always just append appending
+        // always just append
         elements[size()] = element;
         element.setId(index);
         size++;
@@ -121,5 +123,49 @@ public class UnorderedList<T extends Identifiable> extends AbstractList<T> imple
             throw new OutOfMemoryError("Capacity overshot max value.");
         }
         elements = Arrays.copyOf(elements, newCapacity);
+    }
+
+    /**
+     * Note this returns a reference of a pre-allocated instance. Therefore, do not nest iterators!
+     */
+    public Iterator<T> iterator() {
+        itr.reset();
+        return itr;
+    }
+
+    private class Itr implements Iterator<T> {
+        int curIndex; // Index of next element
+
+        /**
+         * Returns {@code true} if the iteration has more elements.
+         * (In other words, returns {@code true} if {@link #next} would
+         * return an element rather than throwing an exception.)
+         *
+         * @return {@code true} if the iteration has more elements
+         */
+        @Override
+        public boolean hasNext() {
+            return curIndex < size();
+        }
+
+        /**
+         * Returns the next element in the iteration.
+         *
+         * @return the next element in the iteration
+         * @throws NoSuchElementException if the iteration has no more elements
+         */
+        @Override
+        public T next() {
+            return get(curIndex++);
+        }
+
+        @Override
+        public void remove() {
+            UnorderedList.this.remove(curIndex);
+        }
+
+        void reset() {
+            curIndex = 0;
+        }
     }
 }

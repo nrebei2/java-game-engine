@@ -1,6 +1,8 @@
 package util.opengl;
 
 import org.lwjgl.system.MemoryStack;
+import util.UnorderedList;
+import util.ecs.Identifiable;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -17,7 +19,7 @@ public class Material {
      *
      * TODO: Ideally this should be an IntMap< String>
      */
-    public ArrayList<TexInfo> texs;
+    public UnorderedList<TexInfo> texs;
 
     /**
      * Shader of this material
@@ -30,7 +32,7 @@ public class Material {
      */
     public Material(String shaderName, Texture... textures) {
         this.shader = ShaderManager.getProgram(shaderName);
-        this.texs = new ArrayList<>();
+        this.texs = new UnorderedList<>();
 
         addTextures(textures);
     }
@@ -56,6 +58,13 @@ public class Material {
      */
     public void addFBOColorTex(FrameBuffer buffer, String uniformName) {
         texs.add(new TexInfo(buffer.texture, uniformName));
+    }
+    
+    public void removeTexture(String uniformName) {
+        var iter = texs.iterator();
+        while (iter.hasNext()) {
+
+        }
     }
 
     /**
@@ -94,7 +103,7 @@ public class Material {
     }
 
     /** Texture class for storage */
-    static class TexInfo {
+    static class TexInfo extends Identifiable {
         public int id;
         public String uniformName;
 

@@ -1,8 +1,10 @@
 package util.opengl;
 
+import org.lwjgl.BufferUtils;
 import util.GameEngine;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import static org.lwjgl.opengl.GL43.*;
 
@@ -17,15 +19,13 @@ public class FrameBuffer {
 
     /**
      * Creates a Framebuffer object with a color, depth, and stencil attachment. Note only the color attachment is readable.
+     * The width and height are FIXED, if the resolution changes it may be best to create a new FrameBuffer.
      * @param width width of buffer
      * @param height height of buffer
      */
     public FrameBuffer(int width, int height) {
         fbo = glGenFramebuffers();
         glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-        System.out.println(width);
-        System.out.println(height);
 
         // Color attachment
         texture = glGenTextures();
