@@ -3,6 +3,7 @@ package util.opengl;
 import util.GameEngine;
 import util.Matrix4;
 import util.UnorderedList;
+import util.Vector3;
 import util.ecs.Identifiable;
 import util.opengl.TextureManager.Texture;
 
@@ -25,16 +26,6 @@ public class Material {
 
     /**
      * Create a new material
-     *
-     * @param shaderName For {@link ShaderProgram#ShaderProgram(String)}
-     */
-    public Material(String shaderName) {
-        this();
-        setShader(shaderName);
-    }
-
-    /**
-     * Create a new material
      */
     public Material() {
         this.texs = new UnorderedList<>();
@@ -42,13 +33,24 @@ public class Material {
     }
 
     /**
-     * Set the shader on this material
+     * Set the shader on this material from {@link ShaderManager#getProgram(String)}
      *
      * @param shaderName For {@link ShaderProgram#ShaderProgram(String)}
      * @return this material for chaining
      */
     public Material setShader(String shaderName) {
         this.shader = GameEngine.shaderManager.getProgram(shaderName);
+        this.shaderName = shaderName;
+        this.dirty = true;
+        return this;
+    }
+
+    /**
+     * Set the shader on this material from {@link ShaderManager#getProgram(String, String)}
+     * @return this material for chaining
+     */
+    public Material setShader(String path, String shaderName) {
+        this.shader = GameEngine.shaderManager.getProgram(path, shaderName);
         this.shaderName = shaderName;
         this.dirty = true;
         return this;
@@ -129,6 +131,17 @@ public class Material {
     public void setMat4(String name, Matrix4 mat) {
         if (!shader.uniforms.containsKey(name)) return;
         glUniformMatrix4fv(shader.uniforms.get(name), false, mat.val);
+    }
+
+    /**
+     * Set the value of a uniform variable for the current attached shader
+     *
+     * @param name Name of uniform on shader
+     * @param vec  value to set as
+     */
+    public void setVec3f(String name, Vector3 vec) {
+        if (!shader.uniforms.containsKey(name)) return;
+        glUniform3f(shader.uniforms.get(name), vec.x, vec.y, vec.z);
     }
 
     /**

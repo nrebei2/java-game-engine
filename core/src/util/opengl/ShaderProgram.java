@@ -38,9 +38,9 @@ public class ShaderProgram {
     }
 
     /**
-     * Creates a program.
+     * Creates a program. Will attempt to load shaders path/name.[vert, frag, geom, comp].
      *
-     * @param name name of shader, loaded from assets/shaders
+     * @param name path of shader
      */
     public ShaderProgram(String name) {
         this.name = name;
@@ -53,10 +53,10 @@ public class ShaderProgram {
     public void reload() {
         // Standard process
         ID = glCreateProgram();
-        Path vertPath = Paths.get("assets/shaders/" + name + ".vert");
-        Path fragPath = Paths.get("assets/shaders/" + name + ".frag");
-        Path geoPath = Paths.get("assets/shaders/" + name + ".geom");
-        Path compPath = Paths.get("assets/shaders/" + name + ".comp");
+        Path vertPath = Paths.get(name + ".vert");
+        Path fragPath = Paths.get(name + ".frag");
+        Path geoPath = Paths.get(name + ".geom");
+        Path compPath = Paths.get(name + ".comp");
 
         // Attached shader ids
         List<Integer> sIDS = new ArrayList<>();

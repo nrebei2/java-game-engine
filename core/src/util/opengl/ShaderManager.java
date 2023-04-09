@@ -16,15 +16,26 @@ public class ShaderManager {
     public int curProgram = -1;
 
     /**
+     * Calls {@link ShaderProgram#ShaderProgram(String)} if program does not exist.
+     * Retrieves a program.
+     *
+     * @param path Project relative path of shader location.
+     * @param name name of shader.
+     */
+    public ShaderProgram getProgram(String path, String name) {
+        ShaderProgram prog = programs.get(path + "/" + name);
+        if (prog != null) return prog;
+
+        ShaderProgram program = new ShaderProgram(path + "/" + name);
+        programs.put(name, program);
+        return program;
+    }
+
+    /**
      * See {@link ShaderProgram#ShaderProgram(String)}
      */
     public ShaderProgram getProgram(String name) {
-        ShaderProgram prog = programs.get(name);
-        if (prog != null) return prog;
-
-        ShaderProgram program = new ShaderProgram(name);
-        programs.put(name, program);
-        return program;
+        return getProgram("assets/shaders", name);
     }
 
     /**

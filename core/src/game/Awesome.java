@@ -20,7 +20,8 @@ public class Awesome extends ScreenController {
 
         // Entity creation
         Mesh cube = MeshPrimitives.Cube().setMat(
-                new Material("cube")
+                new Material()
+                        .setShader("cube")
                         .addTexture(new TextureManager.Texture("awesomeface.png"), "texture1")
         );
         for (int i = 0; i < 10000; i++) {

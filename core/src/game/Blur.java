@@ -18,7 +18,8 @@ public class Blur extends ScreenController {
     public Blur() {
         // Entity creation
         Mesh cube = MeshPrimitives.Cube().setMat(
-                new Material("cube")
+                new Material()
+                        .setShader("cube")
                         .addTexture(new TextureManager.Texture("awesomeface.png"), "texture1")
         );
         engine.createEntity(
@@ -30,7 +31,7 @@ public class Blur extends ScreenController {
                 )
         );
 
-        this.quad = MeshPrimitives.Quad().setMat(new Material("screenspace"));
+        this.quad = MeshPrimitives.Quad().setMat(new Material().setShader("screenspace"));
 
         // Multi-pass render system
         engine.addSystem((engine, delta) -> {

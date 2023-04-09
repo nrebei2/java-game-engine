@@ -86,7 +86,7 @@ public class Skybox {
         loadMap(texture, name, type);
 
         // Add the cubemap texture manually
-        this.cubeMap = new Mesh().setMat(new Material("cubemap"));
+        this.cubeMap = new Mesh().setMat(new Material().setShader("cubemap"));
         cubeMap.getMat().texs.add(new Material.TexInfo(texture, "skybox"));
 
         cubeMap.setGeometry(new Geometry().addAttribute("aPos", new FloatAttribute(3, VERTS, false)));

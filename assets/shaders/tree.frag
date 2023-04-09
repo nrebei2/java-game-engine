@@ -28,8 +28,7 @@ vec3 adjust_normal(vec3 normalMap) {
 void main()
 {
     vec4 base = texture(texture_diffuse0, TexCoords);
-    if (base.a < 0.5)
-    discard;
+    if (base.a < 0.5) discard;
     vec3 color = base.xyz;
 
     vec4 ns = texture(texture_normal0, TexCoords);

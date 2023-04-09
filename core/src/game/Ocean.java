@@ -5,10 +5,12 @@ import util.Matrix4;
 import util.Vector3;
 import util.opengl.*;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static org.lwjgl.opengl.GL43.*;
 
 /**
- * Ocean map using skybox
+ * Ocean map with tree using skybox
  */
 public class Ocean extends ScreenController {
 
@@ -25,16 +27,17 @@ public class Ocean extends ScreenController {
 
     public Ocean() {
         // Entity creation
-        Mesh cube = MeshPrimitives.Cube().setMat(
-                new Material("cube")
-                        .addTexture(new TextureManager.Texture("awesomeface.png"), "texture1")
+        Mesh ground = MeshPrimitives.Quad().setMat(
+                new Material()
+                        .setShader("cube")
+                        .addTexture(new TextureManager.Texture("grass.png"), "texture1")
         );
         engine.createEntity(
-                cube,
+                ground,
                 new Transform(
-                        new Vector3(3, 0, 0),
+                        new Vector3(3, 0, -1),
                         new Vector3(),
-                        new Vector3(1, 1, 1)
+                        new Vector3(2, 2, 1)
                 )
         );
 
@@ -43,14 +46,14 @@ public class Ocean extends ScreenController {
         engine.createEntity(
                 tree,
                 new Transform(
-                        new Vector3(3, -1, 0),
-                        new Vector3(),
-                        new Vector3(1, 1, 1)
+                        new Vector3(3, 0, -1),
+                        new Vector3((float) Math.PI / 2, 0, 0),
+                        new Vector3(0.001f, 0.001f, 0.001f)
                 )
         );
 
         float length = 8192 * 3;
-        Mesh clouds = MeshPrimitives.Quad().setMat(new Material("clouds"));
+        Mesh clouds = MeshPrimitives.Quad().setMat(new Material().setShader("clouds"));
         engine.createEntity(
                 clouds,
                 new Transform(
@@ -63,7 +66,15 @@ public class Ocean extends ScreenController {
 
         Skybox skybox = new Skybox("ocean", "jpg");
 
-        // Same simple render system
+        // Hardcoded constants
+        Vector3 sunDir = new Vector3(-0.45399049974f, -0.89100652419f, 0.43837114679f);
+        tree.begin();
+        tree.setVec3f("u_sunDir", sunDir);
+        Vector3 sunColor = new Vector3(1.8f, 2.0f, 2.5f);
+        tree.setVec3f("u_sunColor", sunColor);
+        tree.end();
+
+        // Simple render system with transparency support
         engine.addSystem((engine, delta) -> {
 
             // First render opaque objects
@@ -87,8 +98,8 @@ public class Ocean extends ScreenController {
                         Model model = pair.comp1;
                         Transform transform = pair.comp2;
                         model.begin();
+                        model.setVec3f("u_viewPos", camera.getTransform().getPosition());
                         model.setCombinedMatrix(camera.getViewProj());
-                        model.setModelMatrix(transform.getModel());
                         model.setModelMatrix(transform.getModel());
                         model.render();
                         model.end();
@@ -109,7 +120,6 @@ public class Ocean extends ScreenController {
 
             // Finally, render transparent objects
             engine.findEntitiesWith(Mesh.class, Transform.class)
-                    .filter((result) -> result.entity.containsType(Transparent.class))
                     .forEach((result -> {
                         var pair = result.components;
                         Mesh mesh = pair.comp1;
@@ -122,6 +132,7 @@ public class Ocean extends ScreenController {
                         mesh.render();
                         mesh.end();
                     }));
+
         });
     }
 

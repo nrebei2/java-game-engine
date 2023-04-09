@@ -3,12 +3,16 @@ package util.opengl;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 import util.Matrix4;
+import util.Vector3;
 import util.opengl.TextureManager.Texture;
 import util.opengl.attributes.FloatAttribute;
 
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static org.lwjgl.assimp.Assimp.*;
+import static org.lwjgl.opengl.GL20.glUniform3f;
 
 // Adapted from https://learnopengl.com/code_viewer_gh.php?code=includes/learnopengl/model.h
 
@@ -58,6 +62,8 @@ public class Model {
             AIMesh aiMesh = AIMesh.create(aiMeshes.get(i));
             Mesh mesh = processMesh(aiMesh, scene);
             meshes[i] = mesh;
+            //System.out.println(Arrays.toString(((FloatAttribute)mesh.getGeo().getAttribute("aPos")).data));
+            //System.out.println(Arrays.toString((mesh.getGeo().indices)));
         }
     }
 
@@ -107,14 +113,13 @@ public class Model {
 
         // indices
         int numFaces = mesh.mNumFaces();
-        int[] indices = new int[numFaces * 3];
+        ArrayList<Integer> ind = new ArrayList<>(numFaces);
         AIFace.Buffer faces = mesh.mFaces();
-        int cur = 0;
         for (int i = 0; i < numFaces; i++) {
             AIFace face = faces.get(i);
             IntBuffer buffer = face.mIndices();
             while (buffer.remaining() > 0) {
-                indices[cur++] = buffer.get();
+                ind.add(buffer.get());
             }
         }
 
@@ -127,15 +132,15 @@ public class Model {
         geometry.addAttribute("aNormal", new FloatAttribute(3, normals, false));
         geometry.addAttribute("aBiTangent", new FloatAttribute(3, biTangents, false));
         geometry.addAttribute("aTangent", new FloatAttribute(3, tangents, false));
-        geometry.setIndices(indices);
+        geometry.setIndices(ind.stream().mapToInt(i -> i).toArray());
 
         Material mat = new Material();
         var material = AIMaterial.create(scene.mMaterials().get(mesh.mMaterialIndex()));
         // maps
         loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse", mat);
         loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_specular", mat);
-        loadMaterialTextures(material, aiTextureType_NORMALS, "texture_normal", mat);
-        loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_opacity", mat);
+        loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal", mat);
+        loadMaterialTextures(material, aiTextureType_OPACITY, "texture_opacity", mat);
 
         nMesh.setGeometry(geometry);
         nMesh.setMat(mat);
@@ -206,5 +211,15 @@ public class Model {
      */
     public void setModelMatrix(Matrix4 model) {
         meshes[0].getMat().setMat4("u_model", model);
+    }
+
+    /**
+     * Set the value of a uniform variable for the current attached shader
+     *
+     * @param name Name of uniform on shader
+     * @param vec  value to set as
+     */
+    public void setVec3f(String name, Vector3 vec) {
+        meshes[0].getMat().setVec3f(name, vec);
     }
 }

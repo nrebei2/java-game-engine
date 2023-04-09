@@ -42,6 +42,8 @@ public class Mesh {
         if (this.geo != null && mat.shader != null) {
             // Attribute locations most likely changed
             glBindVertexArray(VAO);
+            // Critical
+            glBindBuffer(GL_ARRAY_BUFFER, VBO);
             updateAttribPointers();
             glBindVertexArray(0);
             mat.dirty = false;
@@ -79,7 +81,7 @@ public class Mesh {
         // Set attribute pointers
         if (mat != null && mat.shader != null) updateAttribPointers();
         // If the material is null, to render geometry setMat must be called
-        // geo != null -> buffers and pointers will be set
+        // geo != null -> buffers an        new Vector3(0.01f, 0.01f, 0.01f)d pointers will be set
 
         if (geo.indices != null) {
             int EBO = glGenBuffers();
@@ -97,10 +99,15 @@ public class Mesh {
      * Required when attribute data is changed
      */
     private void updateBuffers() {
+        // Bind VBO if needed and only once
+        boolean bind = false;
         for (Geometry.AttrInfo entry : geo.attributes) {
             if (!entry.dirty) continue;
+            if (!bind) {
+                glBindBuffer(GL_ARRAY_BUFFER, VBO);
+                bind = true;
+            }
             fillBuffer(entry);
-
         }
     }
 
@@ -137,7 +144,7 @@ public class Mesh {
             String name = entry.name;
             if (!mat.shader.attributes.containsKey(name)) {
                 System.err.printf("Material's current shader %s has no uniform of name %s!\n", mat.shaderName, name);
-                return;
+                continue;
             }
             int location = mat.shader.attributes.get(name);
             // pointer points to offset supplied in subdata call
@@ -166,8 +173,8 @@ public class Mesh {
      * Renders the mesh onto the screen.
      */
     public void render() {
-        if (geo == null || mat == null) {
-            System.err.println("In Mesh#render: Cannot render without geometry and material set!");
+        if (geo == null || mat == null || mat.shader == null) {
+            System.err.println("In Mesh#render: Cannot render without geometry and material set with shader!");
             return;
         }
 
@@ -198,7 +205,7 @@ public class Mesh {
             glDrawArrays(GL_TRIANGLES, 0, geo.count());
         }
         // Careful
-        //glBindVertexArray(0);
+        glBindVertexArray(0);
     }
 
     /**
