@@ -2,10 +2,7 @@ package game;
 
 import game.components.Transform;
 import util.Vector3;
-import util.opengl.FrameBuffer;
-import util.opengl.Material;
-import util.opengl.Mesh;
-import util.opengl.MeshPrimitives;
+import util.opengl.*;
 
 /**
  * Blurred screen using framebuffer
@@ -21,9 +18,8 @@ public class Blur extends ScreenController {
     public Blur() {
         // Entity creation
         Mesh cube = MeshPrimitives.Cube().setMat(
-                new Material("cube",
-                        new Material.Texture("awesomeface.png", "texture1")
-                )
+                new Material("cube")
+                        .addTexture(new TextureManager.Texture("awesomeface.png"), "texture1")
         );
         engine.createEntity(
                 cube,

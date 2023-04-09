@@ -10,7 +10,7 @@ out vec2 uv;
 
 void main()
 {
-  	uv = aTexCoord;
-	vec4 worldPos = u_model * vec4(aPos, 1);
-	gl_Position = u_viewProj * worldPos;
+    uv = aTexCoord;
+    vec4 worldPos = u_model * vec4(aPos, 1);
+    gl_Position = u_viewProj * worldPos;
 }

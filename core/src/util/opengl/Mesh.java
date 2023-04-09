@@ -39,11 +39,12 @@ public class Mesh {
     public Mesh setMat(Material mat) {
         this.mat = mat;
 
-        if (this.geo != null) {
+        if (this.geo != null && mat.shader != null) {
             // Attribute locations most likely changed
             glBindVertexArray(VAO);
             updateAttribPointers();
             glBindVertexArray(0);
+            mat.dirty = false;
         }
         // If the geometry is null, to render setGeometry must be called
         // mat != null -> buffers and pointers will be set
@@ -53,8 +54,7 @@ public class Mesh {
 
     /**
      * Sets the geometry of this mesh.
-     * Once set, the mesh will not respond to any new attributes added to the geometry UNLESS you call this method again.
-     * However, it will automatically update if any attributes' data are changed.
+     * The mesh will respond to new attributes and if any attributes' data are changed.
      *
      * @param geo Geometry holding attribute info
      * @return This mesh object for chaining
@@ -77,7 +77,7 @@ public class Mesh {
         }
 
         // Set attribute pointers
-        if (mat != null) updateAttribPointers();
+        if (mat != null && mat.shader != null) updateAttribPointers();
         // If the material is null, to render geometry setMat must be called
         // geo != null -> buffers and pointers will be set
 
@@ -89,6 +89,7 @@ public class Mesh {
 
         glBindVertexArray(0);
 
+        geo.dirty = false;
         return this;
     }
 
@@ -96,16 +97,11 @@ public class Mesh {
      * Required when attribute data is changed
      */
     private void updateBuffers() {
-        glBindVertexArray(VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
         for (Geometry.AttrInfo entry : geo.attributes) {
             if (!entry.dirty) continue;
             fillBuffer(entry);
 
         }
-
-        glBindVertexArray(0);
     }
 
     // Helper
@@ -140,7 +136,7 @@ public class Mesh {
             // Check if shader attribute and geometry attribute match names
             String name = entry.name;
             if (!mat.shader.attributes.containsKey(name)) {
-                System.err.printf("Material's current shader %s has no uniform of name %s!", mat.shaderName, name);
+                System.err.printf("Material's current shader %s has no uniform of name %s!\n", mat.shaderName, name);
                 return;
             }
             int location = mat.shader.attributes.get(name);
@@ -167,7 +163,7 @@ public class Mesh {
     }
 
     /**
-     * Binds the shader on this mesh, then renders the mesh onto the screen.
+     * Renders the mesh onto the screen.
      */
     public void render() {
         if (geo == null || mat == null) {
@@ -175,8 +171,12 @@ public class Mesh {
             return;
         }
 
-        updateBuffers();
+        // Hack kinda
+        if (geo.dirty) setGeometry(geo);
+        if (mat.dirty) setMat(mat);
 
+        // If we batch meshes together, would need to only set materials and bind VAO once
+        //  though at that point instancing would be the better option
         // Bind textures from material
         int i = 0;
         for (Material.TexInfo tex : mat.texs) {
@@ -191,12 +191,14 @@ public class Mesh {
 
         // Draw
         glBindVertexArray(VAO);
+        updateBuffers();
         if (geo.indices != null) {
             glDrawElements(GL_TRIANGLES, geo.indices.length, GL_UNSIGNED_INT, 0);
         } else {
             glDrawArrays(GL_TRIANGLES, 0, geo.count());
         }
-        glBindVertexArray(0);
+        // Careful
+        //glBindVertexArray(0);
     }
 
     /**

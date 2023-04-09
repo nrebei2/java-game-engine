@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Manages (caches) ShaderPrograms. Singleton.
+ * Manages (caches) ShaderPrograms.
  */
 public class ShaderManager {
     // Shader name to program object

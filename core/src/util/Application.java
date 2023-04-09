@@ -8,6 +8,7 @@ import org.lwjgl.glfw.GLFWWindowIconifyCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 import util.opengl.ShaderManager;
+import util.opengl.TextureManager;
 
 import java.nio.IntBuffer;
 
@@ -131,11 +132,12 @@ public class Application {
         // Update mouse cursor
         glfwPollEvents();
 
-        // Create global input instance
+        // Create game engine
         GameEngine.input = new Input();
-        GameEngine.input.setWindow(window, dimensions);
-
         GameEngine.shaderManager = new ShaderManager();
+        GameEngine.textureManager = new TextureManager();
+
+        GameEngine.input.setWindow(window, dimensions);
     }
 
     private void loop() {

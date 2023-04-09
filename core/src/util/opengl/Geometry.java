@@ -28,6 +28,8 @@ public class Geometry {
      */
     int offset = 0;
 
+    boolean dirty = true;
+
     /**
      * Attaches an attribute to this geometry. There is no protection for assigning the same attribute to multiple geometries.
      *
@@ -42,7 +44,7 @@ public class Geometry {
             if (attribute.count != count)
                 throw new RuntimeException("Attribute count mismatch! All attributes attached to this geometry should have the same count.");
         }
-
+        dirty = true;
         dynamic = dynamic && attribute.dynamic;
 
         AttrInfo info = new AttrInfo();

@@ -5,6 +5,7 @@ import util.Vector3;
 import util.opengl.Material;
 import util.opengl.Mesh;
 import util.opengl.MeshPrimitives;
+import util.opengl.TextureManager;
 
 import java.util.Random;
 
@@ -19,9 +20,8 @@ public class Awesome extends ScreenController {
 
         // Entity creation
         Mesh cube = MeshPrimitives.Cube().setMat(
-                new Material("cube",
-                        new Material.Texture("awesomeface.png", "texture1")
-                )
+                new Material("cube")
+                        .addTexture(new TextureManager.Texture("awesomeface.png"), "texture1")
         );
         for (int i = 0; i < 10000; i++) {
             // Instancing could be used here, but this works too
