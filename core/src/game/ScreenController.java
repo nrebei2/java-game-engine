@@ -56,6 +56,10 @@ public abstract class ScreenController extends ScreenObservable implements Scree
             observer.exitScreen(this, CODE_BACK);
         }
 
+        if (GameEngine.input.keyJustPressed(GLFW.GLFW_KEY_F2)) {
+            GameEngine.shaderManager.refresh();
+        }
+
     }
 
     @Override

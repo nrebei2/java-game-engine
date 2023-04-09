@@ -1,6 +1,7 @@
 package util.opengl;
 
 import org.lwjgl.system.MemoryStack;
+import util.GameEngine;
 
 import java.nio.IntBuffer;
 import java.nio.file.Files;
@@ -29,7 +30,7 @@ public class ShaderProgram {
      */
     public Map<String, Integer> attributes = new HashMap<>();
 
-    ShaderManager manager;
+    private String name;
 
     // Used for closure
     interface addShader {
@@ -42,6 +43,14 @@ public class ShaderProgram {
      * @param name name of shader, loaded from assets/shaders
      */
     public ShaderProgram(String name) {
+        this.name = name;
+        reload();
+    }
+
+    /**
+     * (re)load shader from source
+     */
+    public void reload() {
         // Standard process
         ID = glCreateProgram();
         Path vertPath = Paths.get("assets/shaders/" + name + ".vert");
@@ -93,9 +102,9 @@ public class ShaderProgram {
      * Use the program
      */
     public void bind() {
-        if (ShaderManager.getInstance().curProgram == ID) return;
+        if (GameEngine.shaderManager.curProgram == ID) return;
         glUseProgram(ID);
-        ShaderManager.getInstance().curProgram = ID;
+        GameEngine.shaderManager.curProgram = ID;
     }
 
     /**
@@ -110,7 +119,7 @@ public class ShaderProgram {
         try {
             content = Files.readString(path);
         } catch (Exception i) {
-            System.err.println("Could not read shader from " + path.toAbsolutePath());
+            //System.err.println("Could not read shader from " + path.toAbsolutePath());
             return Optional.empty();
         }
 

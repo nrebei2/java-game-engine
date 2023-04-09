@@ -5,7 +5,6 @@ import util.Vector3;
 import util.opengl.Material;
 import util.opengl.Mesh;
 import util.opengl.MeshPrimitives;
-import util.opengl.attributes.FloatAttribute;
 
 import java.util.Random;
 

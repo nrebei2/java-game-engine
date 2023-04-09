@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowIconifyCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
+import util.opengl.ShaderManager;
 
 import java.nio.IntBuffer;
 
@@ -133,6 +134,8 @@ public class Application {
         // Create global input instance
         GameEngine.input = new Input();
         GameEngine.input.setWindow(window, dimensions);
+
+        GameEngine.shaderManager = new ShaderManager();
     }
 
     private void loop() {

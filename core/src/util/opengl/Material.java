@@ -1,6 +1,7 @@
 package util.opengl;
 
 import org.lwjgl.system.MemoryStack;
+import util.GameEngine;
 import util.Matrix4;
 import util.UnorderedList;
 import util.ecs.Identifiable;
@@ -19,12 +20,12 @@ public class Material {
      * <p>
      * TODO: Ideally this should be an IntMap< String>
      */
-    public UnorderedList<TexInfo> texs;
+    UnorderedList<TexInfo> texs;
 
     /**
      * Shader of this material
      */
-    public ShaderProgram shader;
+    ShaderProgram shader;
 
     String shaderName;
 
@@ -33,7 +34,7 @@ public class Material {
      * @param textures   Textures this material will maintain
      */
     public Material(String shaderName, Texture... textures) {
-        this.shader = ShaderManager.getInstance().getProgram(shaderName);
+        this.shader = GameEngine.shaderManager.getProgram(shaderName);
         this.texs = new UnorderedList<>();
         this.shaderName = shaderName;
 

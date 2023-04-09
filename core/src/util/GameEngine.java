@@ -1,11 +1,15 @@
 package util;
 
+import util.opengl.ShaderManager;
+
 /**
- * Static references to (for now) the global input instance.
+ * Static references to engine instance.
  */
 public class GameEngine {
     /**
      * Input instance
      */
     public static Input input;
+
+    public static ShaderManager shaderManager;
 }
