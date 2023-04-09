@@ -4,7 +4,7 @@ import util.opengl.attributes.FloatAttribute;
 
 public class MeshPrimitives {
     /**
-     * @return 1x1x1 cube centered at (0, 0, 0) with supplied uvs. Used shader is cube.
+     * @return 1x1x1 cube centered at (0, 0, 0) with supplied uvs. No material attached.
      */
     public static Mesh Cube() {
         float[] cubePos = {
@@ -96,14 +96,10 @@ public class MeshPrimitives {
                 0.0f, 0.0f  // bottom-left
         };
 
-        Mesh cube = new Mesh(
-                new Material("cube",
-                        new Material.Texture("awesomeface.png", "texture1")
-                )
-        );
+        Mesh cube = new Mesh();
         Geometry tri = new Geometry()
                 .addAttribute("aPos",
-                        new FloatAttribute(3, cubePos, false)
+                        new FloatAttribute(3, cubePos, true)
                 )
                 .addAttribute("aTexCoord",
                         new FloatAttribute(2, cubeUvs, false));
@@ -112,9 +108,9 @@ public class MeshPrimitives {
     }
 
     /**
-     * @return quad that fills the entire screen in NDC w/ uvs. Used shader is screenspace.
+     * @return 1x1 quad on z=0. Thus, can be used as a screen quad with NDC. No material attached.
      */
-    public static Mesh ScreenQuad() {
+    public static Mesh Quad() {
         float[] quadPos = {
                 -1.0f, 1.0f,
                 -1.0f, -1.0f,
@@ -134,9 +130,7 @@ public class MeshPrimitives {
                 1.0f, 1.0f
         };
 
-        Mesh quad = new Mesh(
-                new Material("screenspace")
-        );
+        Mesh quad = new Mesh();
         Geometry geo = new Geometry()
                 .addAttribute("aPos",
                         new FloatAttribute(2, quadPos, false)

@@ -10,7 +10,7 @@ public final class Entity extends Identifiable {
     /**
      * components[c] = comp iff component comp is attached to this entity with class c
      */
-    Map<Class<?>, Object> components;
+    public Map<Class<?>, Object> components;
 
     /**
      * Whether systems will be able to access components of this entity.

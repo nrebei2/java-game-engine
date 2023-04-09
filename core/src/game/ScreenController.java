@@ -40,7 +40,7 @@ public abstract class ScreenController extends ScreenObservable implements Scree
         camera = new Camera(
                 new Vector3(),
                 new Vector3(),
-                0.01f, 1000, (float) Math.PI / 2,
+                0.01f, 20000, (float) Math.PI / 2,
                 (float) GameEngine.input.getScreenWidth() / GameEngine.input.getScreenHeight()
         );
 

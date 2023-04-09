@@ -1,6 +1,7 @@
 package util.opengl;
 
 import org.lwjgl.system.MemoryStack;
+import util.Matrix4;
 import util.UnorderedList;
 import util.ecs.Identifiable;
 
@@ -25,13 +26,16 @@ public class Material {
      */
     public ShaderProgram shader;
 
+    String shaderName;
+
     /**
      * @param shaderName For {@link ShaderProgram#ShaderProgram(String)}
      * @param textures   Textures this material will maintain
      */
     public Material(String shaderName, Texture... textures) {
-        this.shader = ShaderManager.getProgram(shaderName);
+        this.shader = ShaderManager.getInstance().getProgram(shaderName);
         this.texs = new UnorderedList<>();
+        this.shaderName = shaderName;
 
         addTextures(textures);
     }
@@ -70,6 +74,49 @@ public class Material {
         texs.add(new TexInfo(map.texture, uniformName));
     }
 
+    /**
+     * Set the value of a uniform variable for the current attached shader
+     *
+     * @param name  Name of uniform on shader
+     * @param value value to set as
+     */
+    public void setBool(String name, boolean value) {
+        if (!shader.uniforms.containsKey(name)) return;
+        glUniform1f(shader.uniforms.get(name), value ? 1 : 0);
+    }
+
+    /**
+     * Set the value of a uniform variable for the current attached shader
+     *
+     * @param name  Name of uniform on shader
+     * @param value value to set as
+     */
+    public void setInt(String name, int value) {
+        if (!shader.uniforms.containsKey(name)) return;
+        glUniform1i(shader.uniforms.get(name), value);
+    }
+
+    /**
+     * Set the value of a uniform variable for the current attached shader
+     *
+     * @param name  Name of uniform on shader
+     * @param value value to set as
+     */
+    public void setFloat(String name, float value) {
+        if (!shader.uniforms.containsKey(name)) return;
+        glUniform1f(shader.uniforms.get(name), value);
+    }
+
+    /**
+     * Set the value of a uniform variable for the current attached shader
+     *
+     * @param name Name of uniform on shader
+     * @param mat  value to set as
+     */
+    public void setMat4(String name, Matrix4 mat) {
+        if (!shader.uniforms.containsKey(name)) return;
+        glUniformMatrix4fv(shader.uniforms.get(name), false, mat.val);
+    }
 
     /**
      * @param uniformName Texture to remove

@@ -14,5 +14,6 @@ public class IntAttribute extends VertexAttribute {
         this.count = data.length / size;
         this.data = data;
         this.dynamic = dynamic;
+        this.sizeof = data.length * 4;
     }
 }

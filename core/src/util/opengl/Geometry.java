@@ -1,6 +1,7 @@
 package util.opengl;
 
-import java.util.HashMap;
+import util.UnorderedList;
+import util.ecs.Identifiable;
 
 /**
  * Container of (named) vertex attributes.
@@ -10,16 +11,27 @@ public class Geometry {
     /**
      * Map from names (case-sensitive) to attributes
      */
-    public HashMap<String, VertexAttribute> attributeMap = new HashMap<>();
+    public UnorderedList<AttrInfo> attributes = new UnorderedList<>(3);
 
     public int[] indices;
 
     private int count = -1;
 
     /**
+     * Are all attributes dynamic
+     */
+    boolean dynamic = false;
+
+    /**
+     * Offset for next added attribute
+     * Conveniently also the total size in bytes of all attributes
+     */
+    int offset = 0;
+
+    /**
      * Attaches an attribute to this geometry. There is no protection for assigning the same attribute to multiple geometries.
      *
-     * @param name      uniform name in shader
+     * @param name      attribute name in shader
      * @param attribute
      * @return same geometry object for chaining
      */
@@ -30,17 +42,35 @@ public class Geometry {
             if (attribute.count != count)
                 throw new RuntimeException("Attribute count mismatch! All attributes attached to this geometry should have the same count.");
         }
-        attributeMap.put(name, attribute);
+
+        dynamic = dynamic && attribute.dynamic;
+
+        AttrInfo info = new AttrInfo();
+        info.attribute = attribute;
+        info.name = name;
+        info.offset = offset;
+        // update offset for next attribute
+        offset += attribute.sizeof;
+        attributes.add(info);
         return this;
     }
 
     /**
+     * Will update the dirty bit of the attribute to become true. Why else are you getting it?
+     *
      * @param name case-sensitive name of attribute
      * @return The attribute if attached, null oth.
      */
     public VertexAttribute getAttribute(String name) {
-        return attributeMap.get(name);
+        for (AttrInfo info : attributes) {
+            if (info.name.equals(name)) {
+                info.dirty = true;
+                return info.attribute;
+            }
+        }
+        return null;
     }
+
 
     /**
      * @param indices null to remove indices
@@ -56,5 +86,21 @@ public class Geometry {
      */
     public int count() {
         return count;
+    }
+
+    class AttrInfo extends Identifiable {
+        VertexAttribute attribute;
+        /**
+         * name in shader
+         */
+        String name;
+        /**
+         * Byte position of attribute data
+         */
+        int offset;
+        /**
+         * Whether the underlying data has been changed since the last render call
+         */
+        boolean dirty;
     }
 }

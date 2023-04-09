@@ -1,7 +1,6 @@
 package util.opengl;
 
 import org.lwjgl.system.MemoryStack;
-import util.Matrix4;
 
 import java.nio.IntBuffer;
 import java.nio.file.Files;
@@ -29,6 +28,8 @@ public class ShaderProgram {
      * Map of attribute names to locations
      */
     public Map<String, Integer> attributes = new HashMap<>();
+
+    ShaderManager manager;
 
     // Used for closure
     interface addShader {
@@ -88,28 +89,13 @@ public class ShaderProgram {
         buildAttributes();
     }
 
-    public void setBool(String name, boolean value) {
-        glProgramUniform1f(ID, uniforms.get(name), value ? 1 : 0);
-    }
-
-    public void setInt(String name, int value) {
-        glProgramUniform1i(ID, uniforms.get(name), value);
-    }
-
-    public void setFloat(String name, float value) {
-        glProgramUniform1f(ID, uniforms.get(name), value);
-    }
-
-    public void setMat4(String name, Matrix4 mat) {
-        glProgramUniformMatrix4fv(ID, uniforms.get(name), false, mat.val);
-    }
-
     /**
      * Use the program
      */
     public void bind() {
-        if (glGetInteger(GL_CURRENT_PROGRAM) == ID) return;
+        if (ShaderManager.getInstance().curProgram == ID) return;
         glUseProgram(ID);
+        ShaderManager.getInstance().curProgram = ID;
     }
 
     /**
@@ -124,7 +110,7 @@ public class ShaderProgram {
         try {
             content = Files.readString(path);
         } catch (Exception i) {
-            System.err.println("Could not read shader from " + path.toAbsolutePath() + ": " + i.getMessage());
+            System.err.println("Could not read shader from " + path.toAbsolutePath());
             return Optional.empty();
         }
 

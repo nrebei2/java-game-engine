@@ -3,6 +3,7 @@ package game;
 import game.components.Transform;
 import util.Vector3;
 import util.opengl.FrameBuffer;
+import util.opengl.Material;
 import util.opengl.Mesh;
 import util.opengl.MeshPrimitives;
 
@@ -18,8 +19,12 @@ public class Blur extends ScreenController {
     private FrameBuffer buffer;
 
     public Blur() {
-
-        Mesh cube = MeshPrimitives.Cube();
+        // Entity creation
+        Mesh cube = MeshPrimitives.Cube().setMat(
+                new Material("cube",
+                        new Material.Texture("awesomeface.png", "texture1")
+                )
+        );
         engine.createEntity(
                 cube,
                 new Transform(
@@ -29,7 +34,7 @@ public class Blur extends ScreenController {
                 )
         );
 
-        this.quad = MeshPrimitives.ScreenQuad();
+        this.quad = MeshPrimitives.Quad().setMat(new Material("screenspace"));
 
         // Multi-pass render system
         engine.addSystem((engine, delta) -> {
@@ -39,14 +44,18 @@ public class Blur extends ScreenController {
                 var pair = result.components;
                 Mesh mesh = pair.comp1;
                 Transform transform = pair.comp2;
+                mesh.begin();
                 mesh.setCombinedMatrix(camera.getViewProj());
                 mesh.setModelMatrix(transform.getModel());
                 mesh.render();
+                mesh.end();
             }));
             buffer.unbind();
 
             // Next pass
+            quad.begin();
             quad.render();
+            quad.end();
         });
     }
 
@@ -56,9 +65,6 @@ public class Blur extends ScreenController {
         createFrameBuffer();
     }
 
-    /**
-     * Creates and assigns
-     */
     private void createFrameBuffer() {
         buffer = new FrameBuffer();
         quad.getMat().removeTexture("color");

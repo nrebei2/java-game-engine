@@ -6,7 +6,6 @@ import util.opengl.attributes.FloatAttribute;
 import util.opengl.attributes.IntAttribute;
 
 import java.nio.ByteBuffer;
-import java.util.Map;
 
 import static org.lwjgl.opengl.GL43.*;
 
@@ -14,7 +13,8 @@ import static org.lwjgl.opengl.GL43.*;
  * A mesh component consists of vertices (held by its geometry) and a shader.
  */
 public class Mesh {
-    private int VAO;
+    // OpenGL objects
+    private int VBO, VAO;
 
     /**
      * Geometry currently assigned to this object
@@ -26,48 +26,60 @@ public class Mesh {
      */
     private Material mat;
 
-    public Mesh(Material material) {
+    public Mesh() {
         VAO = glGenVertexArrays();
-        mat = material;
     }
 
-    public void setGeometry(Geometry geo) {
+    /**
+     * Set the material of this mesh.
+     *
+     * @param mat Material holding shader and textures.
+     * @return This mesh for chaining
+     */
+    public Mesh setMat(Material mat) {
+        this.mat = mat;
+
+        if (this.geo != null) {
+            // Attribute locations most likely changed
+            glBindVertexArray(VAO);
+            updateAttribPointers();
+            glBindVertexArray(0);
+        }
+        // If the geometry is null, to render setGeometry must be called
+        // mat != null -> buffers and pointers will be set
+
+        return this;
+    }
+
+    /**
+     * Sets the geometry of this mesh.
+     * Once set, the mesh will not respond to any new attributes added to the geometry UNLESS you call this method again.
+     * However, it will automatically update if any attributes' data are changed.
+     *
+     * @param geo Geometry holding attribute info
+     * @return This mesh object for chaining
+     */
+    public Mesh setGeometry(Geometry geo) {
         this.geo = geo;
 
-        // TODO: This should be done every time the geometry changes (attributes added) or the shader in the material changes
         // TODO: Try-hard optimizations:
-        //  - If the geometry is static it would probably be best to batch all the attributes in one VBO
         //  - Could buffer entire meshes with the same vertex format to reduce AttribPointer calls
         glBindVertexArray(VAO);
-        for (Map.Entry<String, VertexAttribute> entry : geo.attributeMap.entrySet()) {
-            // Check if shader attribute and geometry attribute match names
-            String name = entry.getKey();
-            VertexAttribute attribute = entry.getValue();
-            if (!mat.shader.attributes.containsKey(name)) continue;
-            int location = mat.shader.attributes.get(name);
 
-            // Generate VBO, set attrib pointer
-            int VBO = glGenBuffers();
-            //System.out.printf("%s location: %d\n", name, program.attributes.get(name));
-            glBindBuffer(GL_ARRAY_BUFFER, VBO);
-            switch (attribute.type) {
-                case GL_FLOAT -> {
-                    FloatAttribute attr = (FloatAttribute) attribute;
-                    glBufferData(GL_ARRAY_BUFFER, attr.data, attribute.dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
-                }
-                case GL_UNSIGNED_INT -> {
-                    IntAttribute attr = (IntAttribute) attribute;
-                    glBufferData(GL_ARRAY_BUFFER, attr.data, attribute.dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
-                }
-                case GL_UNSIGNED_BYTE -> {
-                    ByteAttribute attr = (ByteAttribute) attribute;
-                    // TODO: lwjgl supports only direct buffers so wrap will not work :(
-                    glBufferData(GL_ARRAY_BUFFER, ByteBuffer.wrap(attr.data), attribute.dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
-                }
-            }
-            glVertexAttribPointer(location, attribute.size, attribute.type, attribute.normalized, 0, 0);
-            glEnableVertexAttribArray(location);
+        // Generate VBO, set attrib pointers
+        VBO = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+        glBufferData(GL_ARRAY_BUFFER, geo.offset, geo.dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+
+        // Fill buffer
+        for (Geometry.AttrInfo entry : geo.attributes) {
+            fillBuffer(entry);
         }
+
+        // Set attribute pointers
+        if (mat != null) updateAttribPointers();
+        // If the material is null, to render geometry setMat must be called
+        // geo != null -> buffers and pointers will be set
 
         if (geo.indices != null) {
             int EBO = glGenBuffers();
@@ -76,7 +88,68 @@ public class Mesh {
         }
 
         glBindVertexArray(0);
+
+        return this;
     }
+
+    /**
+     * Required when attribute data is changed
+     */
+    private void updateBuffers() {
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+        for (Geometry.AttrInfo entry : geo.attributes) {
+            if (!entry.dirty) continue;
+            fillBuffer(entry);
+
+        }
+
+        glBindVertexArray(0);
+    }
+
+    // Helper
+    private void fillBuffer(Geometry.AttrInfo entry) {
+        VertexAttribute attribute = entry.attribute;
+        switch (attribute.type) {
+            case GL_FLOAT -> {
+                FloatAttribute attr = (FloatAttribute) attribute;
+                glBufferSubData(GL_ARRAY_BUFFER, entry.offset, attr.data);
+            }
+            case GL_UNSIGNED_INT -> {
+                IntAttribute attr = (IntAttribute) attribute;
+                glBufferSubData(GL_ARRAY_BUFFER, entry.offset, attr.data);
+            }
+            case GL_UNSIGNED_BYTE -> {
+                ByteAttribute attr = (ByteAttribute) attribute;
+                // TODO: lwjgl supports only direct buffers so wrap will not work :(
+                glBufferSubData(GL_ARRAY_BUFFER, entry.offset, ByteBuffer.wrap(attr.data));
+            }
+        }
+        entry.dirty = false;
+    }
+
+    /**
+     * Required when the Material is changed
+     */
+    private void updateAttribPointers() {
+        for (Geometry.AttrInfo entry : geo.attributes) {
+            // Fill buffer
+            VertexAttribute attribute = entry.attribute;
+
+            // Check if shader attribute and geometry attribute match names
+            String name = entry.name;
+            if (!mat.shader.attributes.containsKey(name)) {
+                System.err.printf("Material's current shader %s has no uniform of name %s!", mat.shaderName, name);
+                return;
+            }
+            int location = mat.shader.attributes.get(name);
+            // pointer points to offset supplied in subdata call
+            glVertexAttribPointer(location, attribute.size, attribute.type, attribute.normalized, 0, entry.offset);
+            glEnableVertexAttribArray(location);
+        }
+    }
+
 
     public Geometry getGeo() {
         return geo;
@@ -87,12 +160,22 @@ public class Mesh {
     }
 
     /**
+     * Begin rendering sequence for this mesh. You must call his method before setting shader uniforms!
+     */
+    public void begin() {
+        mat.shader.bind();
+    }
+
+    /**
      * Binds the shader on this mesh, then renders the mesh onto the screen.
      */
     public void render() {
-        if (geo == null) return;
+        if (geo == null || mat == null) {
+            System.err.println("In Mesh#render: Cannot render without geometry and material set!");
+            return;
+        }
 
-        mat.shader.bind();
+        updateBuffers();
 
         // Bind textures from material
         int i = 0;
@@ -101,7 +184,7 @@ public class Mesh {
                 //System.out.printf("Binding %s\n", tex.uniformName);
                 glActiveTexture(GL_TEXTURE0 + i);
                 glBindTexture(GL_TEXTURE_2D, tex.id);
-                mat.shader.setInt(tex.uniformName, i);
+                mat.setInt(tex.uniformName, i);
             }
             i += 1;
         }
@@ -117,16 +200,22 @@ public class Mesh {
     }
 
     /**
-     * Sets of view-projection matrix for rendering of this mesh.
+     * End the drawing sequence of this mesh.
      */
-    public void setCombinedMatrix(Matrix4 mat) {
-        this.mat.shader.setMat4("u_viewProj", mat);
+    public void end() {
     }
 
     /**
-     * Sets the model matrix for this mesh.
+     * Sets of view-projection matrix for rendering of this mesh. Call begin before this method.
+     */
+    public void setCombinedMatrix(Matrix4 mat) {
+        this.mat.setMat4("u_viewProj", mat);
+    }
+
+    /**
+     * Sets the model matrix for this mesh. Call begin before this method.
      */
     public void setModelMatrix(Matrix4 model) {
-        mat.shader.setMat4("u_model", model);
+        mat.setMat4("u_model", model);
     }
 }

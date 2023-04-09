@@ -2,8 +2,10 @@ package game;
 
 import game.components.Transform;
 import util.Vector3;
+import util.opengl.Material;
 import util.opengl.Mesh;
 import util.opengl.MeshPrimitives;
+import util.opengl.attributes.FloatAttribute;
 
 import java.util.Random;
 
@@ -17,7 +19,11 @@ public class Awesome extends ScreenController {
         this.gen = new Random();
 
         // Entity creation
-        Mesh cube = MeshPrimitives.Cube();
+        Mesh cube = MeshPrimitives.Cube().setMat(
+                new Material("cube",
+                        new Material.Texture("awesomeface.png", "texture1")
+                )
+        );
         for (int i = 0; i < 10000; i++) {
             // Instancing could be used here, but this works too
             engine.createEntity(
@@ -32,16 +38,21 @@ public class Awesome extends ScreenController {
 
         // Very basic rendering system with camera
         engine.addSystem((engine, delta) -> {
-                    engine.findEntitiesWith(Mesh.class, Transform.class).forEach((result -> {
-                        var pair = result.components;
-                        Mesh mesh = pair.comp1;
-                        Transform transform = pair.comp2;
-                        mesh.setCombinedMatrix(camera.getViewProj());
-                        mesh.setModelMatrix(transform.getModel());
-                        mesh.render();
-                    }));
-                }
-        );
+            // Small optimization, we are only using one shader
+            cube.begin();
+            cube.setCombinedMatrix(camera.getViewProj());
+            cube.end();
+            engine.findEntitiesWith(Mesh.class, Transform.class).forEach((result -> {
+                var pair = result.components;
+                Mesh mesh = pair.comp1;
+                Transform transform = pair.comp2;
+                mesh.begin();
+                //((FloatAttribute) mesh.getGeo().getAttribute("aPos")).data[0] = rand(-10f, 10f);
+                mesh.setModelMatrix(transform.getModel());
+                mesh.render();
+                mesh.end();
+            }));
+        });
     }
 
     private float rand(float min, float max) {
