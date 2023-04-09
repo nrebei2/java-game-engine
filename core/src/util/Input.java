@@ -20,6 +20,7 @@ public final class Input {
 
     // Pressed keyboard keys
     private BitSet pressedButtons = new BitSet(GLFW_KEY_LAST);
+    private BitSet justPressedButtons = new BitSet(GLFW_KEY_LAST);
 
     /**
      * Screen window origin at bottom left corner.
@@ -45,7 +46,10 @@ public final class Input {
             if (window != handle || key == GLFW_KEY_UNKNOWN) return;
             switch (action) {
                 case GLFW_RELEASE -> pressedButtons.set(key, false);
-                case GLFW_PRESS -> pressedButtons.set(key, true);
+                case GLFW_PRESS -> {
+                    pressedButtons.set(key, true);
+                    justPressedButtons.set(key, true);
+                }
             }
         }
     };
@@ -75,8 +79,9 @@ public final class Input {
      * Update attributes of the class
      */
     public void update() {
-        // Reset scroll delta
+        // Reset data
         scrollX = scrollY = 0;
+        justPressedButtons.clear();
         // Update mouse position and delta
         try (MemoryStack stack = stackPush()) {
             DoubleBuffer x = stack.mallocDouble(1); // int*
@@ -107,6 +112,14 @@ public final class Input {
      */
     public boolean isKeyPressed(int key) {
         return pressedButtons.get(key);
+    }
+
+    /**
+     * @param key GLFW key-code
+     * @return whether the key Zhas just been pressed
+     */
+    public boolean keyJustPressed(int key) {
+        return justPressedButtons.get(key);
     }
 
     public float getDeltaX() {

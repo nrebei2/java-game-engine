@@ -20,11 +20,6 @@ public abstract class ScreenController extends ScreenObservable implements Scree
     public final static int CODE_BACK = 1;
 
     /**
-     * Used to force the exitScreen call only once when holding down key
-     */
-    public boolean nextPrevious, prevPrevious = true;
-
-    /**
      * ECS engine
      */
     Engine engine;
@@ -54,17 +49,12 @@ public abstract class ScreenController extends ScreenObservable implements Scree
         engine.run(delta);
 
         // Switch screens on arrow key press
-        boolean rightPressed = GameEngine.input.isKeyPressed(GLFW.GLFW_KEY_RIGHT);
-        if (rightPressed && !nextPrevious) {
+        if (GameEngine.input.keyJustPressed(GLFW.GLFW_KEY_RIGHT)) {
             observer.exitScreen(this, CODE_NEXT);
         }
-        nextPrevious = rightPressed;
-
-        boolean leftPressed = GameEngine.input.isKeyPressed(GLFW.GLFW_KEY_LEFT);
-        if (leftPressed && !prevPrevious) {
+        if (GameEngine.input.keyJustPressed(GLFW.GLFW_KEY_LEFT)) {
             observer.exitScreen(this, CODE_BACK);
         }
-        prevPrevious = leftPressed;
 
     }
 
