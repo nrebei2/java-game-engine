@@ -47,6 +47,7 @@ public class Material {
 
     /**
      * Set the shader on this material from {@link ShaderManager#getProgram(String, String)}
+     *
      * @return this material for chaining
      */
     public Material setShader(String path, String shaderName) {
@@ -65,7 +66,7 @@ public class Material {
      */
     public Material addTexture(Texture texture, String uniformName) {
         int id = GameEngine.textureManager.getTexture(texture);
-        texs.add(new TexInfo(id, uniformName));
+        texs.add(new TexInfo(id, uniformName, GL_TEXTURE_2D));
         return this;
     }
 
@@ -76,7 +77,7 @@ public class Material {
      * @param uniformName Name of uniform in shader that will hold this texture.
      */
     public void addFBOColorTex(FrameBuffer buffer, String uniformName) {
-        texs.add(new TexInfo(buffer.texture, uniformName));
+        texs.add(new TexInfo(buffer.stencilTexture, uniformName, GL_TEXTURE_2D));
     }
 
     /**
@@ -86,7 +87,7 @@ public class Material {
      * @param uniformName Name of uniform in shader that will hold this texture.
      */
     public void addSkyboxTex(Skybox map, String uniformName) {
-        texs.add(new TexInfo(map.texture, uniformName));
+        texs.add(new TexInfo(map.texture, uniformName, GL_TEXTURE_CUBE_MAP));
     }
 
     /**
@@ -164,14 +165,17 @@ public class Material {
     static class TexInfo extends Identifiable {
         public int id;
         public String uniformName;
+        public int target;
 
         /**
          * @param id          GL shader id
          * @param uniformName Name of uniform in shader that will hold this texture.
+         * @param target OpenGL texture target
          */
-        public TexInfo(int id, String uniformName) {
+        public TexInfo(int id, String uniformName, int target) {
             this.id = id;
             this.uniformName = uniformName;
+            this.target = target;
         }
     }
 

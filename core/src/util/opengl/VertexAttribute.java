@@ -1,5 +1,7 @@
 package util.opengl;
 
+import util.opengl.attributes.AttributeType;
+
 /**
  * Abstraction of a vertex attribute passed into some location in a vertex shader
  */
@@ -15,7 +17,7 @@ public abstract class VertexAttribute {
     /**
      * OpenGL data type for each element
      */
-    public int type;
+    public AttributeType type;
     /**
      * Whether to normalize ([-1, -1] signed, [0, 1] unsigned)
      */
@@ -28,4 +30,9 @@ public abstract class VertexAttribute {
      * Size of data in bytes
      */
     public int sizeof;
+
+    /**
+     * Whether each attribute should correspond to an instance instead of a vertex
+     */
+    public boolean instanced;
 }

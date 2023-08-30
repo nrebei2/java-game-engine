@@ -346,7 +346,7 @@ public class Vector3 {
      * @return This vector for chaining
      */
     public Vector3 mul(final Matrix4 matrix) {
-        final float l_mat[] = matrix.val;
+        final float[] l_mat = matrix.val;
         return this.set(x * l_mat[Matrix4.M00] + y * l_mat[Matrix4.M01] + z * l_mat[Matrix4.M02] + l_mat[Matrix4.M03],
                 x * l_mat[Matrix4.M10] + y * l_mat[Matrix4.M11] + z * l_mat[Matrix4.M12] + l_mat[Matrix4.M13],
                 x * l_mat[Matrix4.M20] + y * l_mat[Matrix4.M21] + z * l_mat[Matrix4.M22] + l_mat[Matrix4.M23]);
@@ -359,7 +359,7 @@ public class Vector3 {
      * @return This vector for chaining
      */
     public Vector3 traMul(final Matrix4 matrix) {
-        final float l_mat[] = matrix.val;
+        final float[] l_mat = matrix.val;
         return this.set(x * l_mat[Matrix4.M00] + y * l_mat[Matrix4.M10] + z * l_mat[Matrix4.M20] + l_mat[Matrix4.M30],
                 x * l_mat[Matrix4.M01] + y * l_mat[Matrix4.M11] + z * l_mat[Matrix4.M21] + l_mat[Matrix4.M31],
                 x * l_mat[Matrix4.M02] + y * l_mat[Matrix4.M12] + z * l_mat[Matrix4.M22] + l_mat[Matrix4.M32]);
@@ -373,7 +373,7 @@ public class Vector3 {
      * @return This vector for chaining
      */
     public Vector3 prj(final Matrix4 matrix) {
-        final float l_mat[] = matrix.val;
+        final float[] l_mat = matrix.val;
         final float l_w = 1f / (x * l_mat[Matrix4.M30] + y * l_mat[Matrix4.M31] + z * l_mat[Matrix4.M32] + l_mat[Matrix4.M33]);
         return this.set((x * l_mat[Matrix4.M00] + y * l_mat[Matrix4.M01] + z * l_mat[Matrix4.M02] + l_mat[Matrix4.M03]) * l_w,
                 (x * l_mat[Matrix4.M10] + y * l_mat[Matrix4.M11] + z * l_mat[Matrix4.M12] + l_mat[Matrix4.M13]) * l_w,
@@ -387,7 +387,7 @@ public class Vector3 {
      * @return This vector for chaining
      */
     public Vector3 rot(final Matrix4 matrix) {
-        final float l_mat[] = matrix.val;
+        final float[] l_mat = matrix.val;
         return this.set(x * l_mat[Matrix4.M00] + y * l_mat[Matrix4.M01] + z * l_mat[Matrix4.M02],
                 x * l_mat[Matrix4.M10] + y * l_mat[Matrix4.M11] + z * l_mat[Matrix4.M12],
                 x * l_mat[Matrix4.M20] + y * l_mat[Matrix4.M21] + z * l_mat[Matrix4.M22]);
@@ -401,7 +401,7 @@ public class Vector3 {
      * @return The vector for chaining
      */
     public Vector3 unrotate(final Matrix4 matrix) {
-        final float l_mat[] = matrix.val;
+        final float[] l_mat = matrix.val;
         return this.set(x * l_mat[Matrix4.M00] + y * l_mat[Matrix4.M10] + z * l_mat[Matrix4.M20],
                 x * l_mat[Matrix4.M01] + y * l_mat[Matrix4.M11] + z * l_mat[Matrix4.M21],
                 x * l_mat[Matrix4.M02] + y * l_mat[Matrix4.M12] + z * l_mat[Matrix4.M22]);
@@ -416,7 +416,7 @@ public class Vector3 {
      * @return The vector for chaining
      */
     public Vector3 untransform(final Matrix4 matrix) {
-        final float l_mat[] = matrix.val;
+        final float[] l_mat = matrix.val;
         x -= l_mat[Matrix4.M03];
         y -= l_mat[Matrix4.M03];
         z -= l_mat[Matrix4.M03];
@@ -573,8 +573,7 @@ public class Vector3 {
     public boolean epsilonEquals(float x, float y, float z, float epsilon) {
         if (Math.abs(x - this.x) > epsilon) return false;
         if (Math.abs(y - this.y) > epsilon) return false;
-        if (Math.abs(z - this.z) > epsilon) return false;
-        return true;
+        return !(Math.abs(z - this.z) > epsilon);
     }
 
 

@@ -22,7 +22,7 @@ public class UnorderedList<T extends Identifiable> extends AbstractList<T> imple
     /**
      * Iterator cache
      */
-    private Itr itr = new Itr();
+    private final Itr itr = new Itr();
 
     public UnorderedList() {
         this(10);

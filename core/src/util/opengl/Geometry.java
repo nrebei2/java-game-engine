@@ -23,7 +23,7 @@ public class Geometry {
     boolean dynamic = false;
 
     /**
-     * Offset for next added attribute
+     * Offset for next added attribute.
      * Conveniently also the total size in bytes of all attributes
      */
     int offset = 0;
@@ -38,11 +38,14 @@ public class Geometry {
      * @return same geometry object for chaining
      */
     public Geometry addAttribute(String name, VertexAttribute attribute) {
-        if (count == -1) {
-            count = attribute.count;
-        } else {
-            if (attribute.count != count)
-                throw new RuntimeException("Attribute count mismatch! All attributes attached to this geometry should have the same count.");
+        if (attribute.count != 0) {
+            // ignore if empty or instanced
+            if (count == -1) {
+                count = attribute.count;
+            } else {
+                if (attribute.count != count)
+                    throw new RuntimeException("Attribute count mismatch! All attributes attached to this geometry should have the same count.");
+            }
         }
         dirty = true;
         dynamic = dynamic && attribute.dynamic;

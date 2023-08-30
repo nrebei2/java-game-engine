@@ -2,28 +2,33 @@ package game;
 
 import util.Game;
 import util.Screen;
+import util.ScreenObservable;
 import util.ScreenObserver;
+
+import java.util.ArrayList;
 
 /**
  * Root game for this application
  */
 public class Root extends Game implements ScreenObserver {
 
-    ScreenController[] screens = new ScreenController[3];
+    ArrayList<ScreenController> screens = new ArrayList<>();
     int curScreen;
 
     @Override
     public void create() {
-        screens[0] = new Awesome();
-        screens[1] = new Blur();
-        screens[2] = new Ocean();
+        screens.add(new Awesome());
+        screens.add(new Blur());
+        screens.add(new Ocean());
+        screens.add(new Space());
+        screens.add(new Houses());
 
-        screens[0].setObserver(this);
-        screens[1].setObserver(this);
-        screens[2].setObserver(this);
+        for (ScreenObservable screen : screens) {
+            screen.setObserver(this);
+        }
 
         curScreen = 0;
-        setScreen(screens[curScreen]);
+        setScreen(screens.get(curScreen));
     }
 
     /**
@@ -37,11 +42,11 @@ public class Root extends Game implements ScreenObserver {
     @Override
     public void exitScreen(Screen screen, int exitCode) {
         if (exitCode == ScreenController.CODE_NEXT) {
-            curScreen = (curScreen + 1) % screens.length;
-            setScreen(screens[curScreen]);
+            curScreen = (curScreen + 1) % screens.size();
+            setScreen(screens.get(curScreen));
         } else if (exitCode == ScreenController.CODE_BACK) {
-            curScreen = (curScreen + screens.length - 1) % screens.length;
-            setScreen(screens[curScreen]);
+            curScreen = (curScreen + screens.size() - 1) % screens.size();
+            setScreen(screens.get(curScreen));
         }
     }
 }

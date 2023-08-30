@@ -12,7 +12,7 @@ public class ByteAttribute extends VertexAttribute {
 
     public ByteAttribute(int size, byte[] data, boolean dynamic) {
         this.size = size;
-        this.type = GL_BYTE;
+        this.type = AttributeType.BYTE;
         this.normalized = true;
         this.count = data.length / size;
         this.data = data;

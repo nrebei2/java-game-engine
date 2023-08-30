@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public class ShaderManager {
     // Shader name to program object
-    private Map<String, ShaderProgram> programs = new HashMap<>();
+    private final Map<String, ShaderProgram> programs = new HashMap<>();
 
     /**
      * Current bound program ID

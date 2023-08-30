@@ -9,7 +9,7 @@ public class IntAttribute extends VertexAttribute {
 
     public IntAttribute(int size, int[] data, boolean dynamic) {
         this.size = size;
-        this.type = GL_INT;
+        this.type = AttributeType.INT;
         this.normalized = false;
         this.count = data.length / size;
         this.data = data;

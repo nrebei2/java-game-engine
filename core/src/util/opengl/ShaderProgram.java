@@ -63,10 +63,18 @@ public class ShaderProgram {
 
         addShader a = (t, p) -> {
             Optional<Integer> sID = loadShader(t, p);
-            sID.ifPresent((id -> {
-                glAttachShader(ID, id);
-                sIDS.add(id);
-            }));
+            sID.ifPresentOrElse(
+                    (id -> {
+                        glAttachShader(ID, id);
+                        sIDS.add(id);
+                    }),
+                    () -> {
+                        if (t == GL_VERTEX_SHADER || t == GL_FRAGMENT_SHADER) {
+                            System.err.println("Vertex shader or fragment shader @ " + p.toAbsolutePath() + " failed to compile!");
+                            System.exit(1);
+                        }
+                    }
+            );
         };
 
         a.addShader(GL_VERTEX_SHADER, vertPath);

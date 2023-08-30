@@ -81,12 +81,12 @@ public class Matrix4 {
     public static final int M33 = 15;
 
     static final Matrix4 tmpMat = new Matrix4();
-    private static float[] rotCache = new float[16];
+    private static final float[] rotCache = new float[16];
 
     /**
      * Column major order
      */
-    public final float val[] = new float[16];
+    public final float[] val = new float[16];
 
     /**
      * Constructs an identity matrix

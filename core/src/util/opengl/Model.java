@@ -9,10 +9,8 @@ import util.opengl.attributes.FloatAttribute;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static org.lwjgl.assimp.Assimp.*;
-import static org.lwjgl.opengl.GL20.glUniform3f;
 
 // Adapted from https://learnopengl.com/code_viewer_gh.php?code=includes/learnopengl/model.h
 
@@ -24,8 +22,8 @@ public class Model {
     /**
      * Underlying meshes
      */
-    Mesh[] meshes;
-    private String texPath;
+    private Mesh[] meshes;
+    private final String texPath;
 
     /**
      * @param name    Project path of model file
@@ -62,8 +60,6 @@ public class Model {
             AIMesh aiMesh = AIMesh.create(aiMeshes.get(i));
             Mesh mesh = processMesh(aiMesh, scene);
             meshes[i] = mesh;
-            //System.out.println(Arrays.toString(((FloatAttribute)mesh.getGeo().getAttribute("aPos")).data));
-            //System.out.println(Arrays.toString((mesh.getGeo().indices)));
         }
     }
 
@@ -138,7 +134,8 @@ public class Model {
         var material = AIMaterial.create(scene.mMaterials().get(mesh.mMaterialIndex()));
         // maps
         loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse", mat);
-        loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_specular", mat);
+        //loadMaterialTextures(material, aiTextureType_BUMP, "texture_opacity", mat);
+        loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular", mat);
         loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal", mat);
         loadMaterialTextures(material, aiTextureType_OPACITY, "texture_opacity", mat);
 
@@ -193,6 +190,15 @@ public class Model {
     }
 
     /**
+     * See {@link Mesh#renderInstanced(int)}
+     */
+    public void renderInstanced(int count) {
+        for (Mesh mesh : meshes) {
+            mesh.renderInstanced(count);
+        }
+    }
+
+    /**
      * End the drawing sequence of this model.
      */
     public void end() {
@@ -221,5 +227,19 @@ public class Model {
      */
     public void setVec3f(String name, Vector3 vec) {
         meshes[0].getMat().setVec3f(name, vec);
+    }
+
+    /**
+     * Set the value of a uniform variable for the current attached shader
+     *
+     * @param name Name of uniform on shader
+     * @param val  value to set as
+     */
+    public void setFloat(String name, float val) {
+        meshes[0].getMat().setFloat(name, val);
+    }
+
+    public Mesh[] getMeshes() {
+        return meshes;
     }
 }

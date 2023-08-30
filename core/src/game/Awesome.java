@@ -47,7 +47,6 @@ public class Awesome extends ScreenController {
                 Mesh mesh = pair.comp1;
                 Transform transform = pair.comp2;
                 mesh.begin();
-                //((FloatAttribute) mesh.getGeo().getAttribute("aPos")).data[0] = rand(-10f, 10f);
                 mesh.setModelMatrix(transform.getModel());
                 mesh.render();
                 mesh.end();

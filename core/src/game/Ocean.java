@@ -5,8 +5,7 @@ import util.Matrix4;
 import util.Vector3;
 import util.opengl.*;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.opengl.GL43.*;
 
 /**
@@ -100,6 +99,7 @@ public class Ocean extends ScreenController {
                         model.begin();
                         model.setVec3f("u_viewPos", camera.getTransform().getPosition());
                         model.setCombinedMatrix(camera.getViewProj());
+                        model.setFloat("u_time", (float) glfwGetTime());
                         model.setModelMatrix(transform.getModel());
                         model.render();
                         model.end();

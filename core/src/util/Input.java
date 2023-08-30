@@ -20,7 +20,7 @@ public final class Input {
 
     // Pressed keyboard keys
     private BitSet pressedButtons = new BitSet(GLFW_KEY_LAST);
-    private BitSet justPressedButtons = new BitSet(GLFW_KEY_LAST);
+    private final BitSet justPressedButtons = new BitSet(GLFW_KEY_LAST);
 
     /**
      * Screen window origin at bottom left corner.
@@ -35,12 +35,12 @@ public final class Input {
 
     private float scrollX, scrollY = 0;
 
-    private int count = 0;
+    private final int count = 0;
 
     public Input() {
     }
 
-    private GLFWKeyCallback keyCallback = new GLFWKeyCallback() {
+    private final GLFWKeyCallback keyCallback = new GLFWKeyCallback() {
         @Override
         public void invoke(long window, int key, int scancode, int action, int mods) {
             if (window != handle || key == GLFW_KEY_UNKNOWN) return;
@@ -54,7 +54,7 @@ public final class Input {
         }
     };
 
-    private GLFWScrollCallback scrollCallback = new GLFWScrollCallback() {
+    private final GLFWScrollCallback scrollCallback = new GLFWScrollCallback() {
         @Override
         public void invoke(long window, double xoffset, double yoffset) {
             if (window != handle) return;
@@ -91,8 +91,6 @@ public final class Input {
             int xpos = (int) x.get(0);
             deltaX = (float) (xpos - mouseX);
             deltaY = (float) (ypos - mouseY);
-            //count++;
-            //System.out.printf("count: %d\n", count);
             mouseY = ypos;
             mouseX = xpos;
         }
@@ -116,7 +114,7 @@ public final class Input {
 
     /**
      * @param key GLFW key-code
-     * @return whether the key Zhas just been pressed
+     * @return whether the key has just been pressed
      */
     public boolean keyJustPressed(int key) {
         return justPressedButtons.get(key);

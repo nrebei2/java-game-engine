@@ -48,6 +48,7 @@ public class CameraController implements System {
         // Movement
         float delta = movementSpeed * deltaTime;
         if (GameEngine.input.isKeyPressed(GLFW_KEY_LEFT_SHIFT)) delta *= shiftScale;
+        if (GameEngine.input.isKeyPressed(GLFW_KEY_LEFT_CONTROL)) delta /= shiftScale;
 
         Vector3 angles = camera.getTransform().getRotation();
         float[] rotMat = Matrix4.rotate_xyz(angles.x, angles.y, angles.z);

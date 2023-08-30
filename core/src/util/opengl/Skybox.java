@@ -68,7 +68,7 @@ public class Skybox {
             1.0f, -1.0f, 1.0f
     };
     /**
-     * Cubemap texture id
+     * Cube map texture id
      */
     int texture;
 
@@ -87,8 +87,7 @@ public class Skybox {
 
         // Add the cubemap texture manually
         this.cubeMap = new Mesh().setMat(new Material().setShader("cubemap"));
-        cubeMap.getMat().texs.add(new Material.TexInfo(texture, "skybox"));
-
+        cubeMap.getMat().addSkyboxTex(this, "skybox");
         cubeMap.setGeometry(new Geometry().addAttribute("aPos", new FloatAttribute(3, VERTS, false)));
     }
 
@@ -100,6 +99,7 @@ public class Skybox {
      * Helper function to load a cube map texture through stb_image
      */
     private void loadMap(int id, String name, String type) {
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, id);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
