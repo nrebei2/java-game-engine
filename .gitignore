@@ -106,3 +106,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Ignore Gradle build output directory
+build

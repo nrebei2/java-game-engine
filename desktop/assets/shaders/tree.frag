@@ -1,4 +1,4 @@
-#version 430 core
+#version 410 core
 out vec4 FragColor;
 
 in GS_OUT {
@@ -12,9 +12,9 @@ in GS_OUT {
 uniform sampler2D texture_diffuse0;
 uniform sampler2D texture_normal0;
 
-layout (location = 2) uniform vec3 u_sunDir;
-layout (location = 3) uniform vec3 u_viewPos;
-layout (location = 4) uniform vec3 u_sunColor;
+uniform vec3 u_sunDir;
+uniform vec3 u_viewPos;
+uniform vec3 u_sunColor;
 
 
 vec3 adjust_normal(vec3 normalMap) {

@@ -65,6 +65,14 @@ public class Application {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, config.resizable ? GLFW_TRUE : GLFW_FALSE); // the window will be resizable
 
+        // For macOS
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+
+
         // Create the window
         // TODO Maybe because im just on linux, but setting monitor to NULL anytime will result in tearing
         window = glfwCreateWindow(
@@ -73,7 +81,6 @@ public class Application {
         if (window == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
 
-        // Make the OpenGL context current
         glfwMakeContextCurrent(window);
         // Enable v-sync
         glfwSwapInterval(1);
@@ -124,7 +131,11 @@ public class Application {
 
         // Capture the mouse
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+        if (glfwRawMouseMotionSupported()) {
+            glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+        } else {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
 
         // Make the window visible
         glfwShowWindow(window);

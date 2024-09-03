@@ -1,10 +1,10 @@
-#version 430 core
+#version 410 core
 
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec2 aTexCoord;
 
-layout (location = 0) uniform mat4 u_viewProj;
-layout (location = 1) uniform mat4 u_model;
+uniform mat4 u_viewProj;
+uniform mat4 u_model;
 
 out vec2 uv;
 

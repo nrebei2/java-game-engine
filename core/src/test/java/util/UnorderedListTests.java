@@ -1,7 +1,8 @@
+package util;
+
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import util.ecs.Identifiable;
-import util.UnorderedList;
 
 class Stub extends Identifiable {
     int a;
